@@ -29,14 +29,15 @@ class Chat extends StatelessWidget {
           backgroundColor: new Color(0xFF1D4886),
           elevation:
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 6.0,
-          actions: <Widget>[
-            new IconButton(
-              icon: new Icon(Icons.g_translate),
-              color: Colors.white,
-              tooltip: 'Translation',
-              onPressed: () {},
-            ),
-          ]),
+          // actions: <Widget>[
+          //   new IconButton(
+          //     icon: new Icon(Icons.g_translate),
+          //     color: Colors.white,
+          //     tooltip: 'Translation',
+          //     onPressed: () {},
+          //   ),
+          // ]
+          ),
       body: new ChatScreen(
         peerId: peerId,
       ),
