@@ -20,9 +20,6 @@ class AnnounceState extends State<Announce> {
   String userId;
   SharedPreferences prefs;
   String id;
-  
-
-
   readLocal() async {
     prefs = await SharedPreferences.getInstance();
     id = prefs.getString("id").toString() ?? '';
