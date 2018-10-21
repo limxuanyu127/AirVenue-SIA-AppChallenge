@@ -59,6 +59,11 @@ class MessengerHomeState extends State<MessengerHome> {
 }
 
 Widget _buildChats(BuildContext context, DocumentSnapshot document) {
+  SharedPreferences prefs;
+  storeLocal(forumName) async {
+    prefs = await SharedPreferences.getInstance();
+    await prefs.setString('forumName', forumName);
+  }
   return new ListTile(
       leading: new CircleAvatar(
         foregroundColor: Theme.of(context).primaryColor,
@@ -90,6 +95,7 @@ Widget _buildChats(BuildContext context, DocumentSnapshot document) {
           );
         } else {
           String forumName = document['displayName'];
+          storeLocal(forumName);
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => ChatForum(forumName)),

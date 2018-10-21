@@ -16,6 +16,8 @@ final ThemeData androidTheme = new ThemeData(
   primaryColorBrightness: Brightness.light,
 );
 
+String forum;
+
 const String defaultUserName = "AirVenue Administrator";
 
 class ChatForum extends StatefulWidget {
@@ -60,18 +62,20 @@ class ChatForumScreen extends State<ChatForum> with TickerProviderStateMixin {
       body: new Column(children: <Widget>[
         new Flexible(
             child: new StreamBuilder(
-                      stream: Firestore.instance
-                          .collection('users').document(id).collection('announcements')
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) return const Text('Loading...');
-                        return new ListView.builder(
-                          itemCount: snapshot.data.documents.length,
-                          padding: const EdgeInsets.only(top: 10.0),
-                          itemBuilder: (context, index) => _buildListItem(
-                              context, snapshot.data.documents[index]),
-                        );
-                      })),
+                stream: Firestore.instance
+                    .collection('forums')
+                    .document(forumName)
+                    .collection('messages')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) return const Text('Loading...');
+                  return new ListView.builder(
+                    itemCount: snapshot.data.documents.length,
+                    padding: const EdgeInsets.all(6.0),
+                    itemBuilder: (context, index) => _buildListItem(
+                        context, snapshot.data.documents[index]),
+                  );
+                })),
         new Divider(height: 1.0),
         new Container(
           child: _buildComposer(),
@@ -82,6 +86,8 @@ class ChatForumScreen extends State<ChatForum> with TickerProviderStateMixin {
   }
 
   Widget _buildComposer() {
+    readLocal();
+    readData();
     return new IconTheme(
       data: new IconThemeData(color: Theme.of(context).accentColor),
       child: new Container(
@@ -125,8 +131,6 @@ class ChatForumScreen extends State<ChatForum> with TickerProviderStateMixin {
   }
 
   void _submitMsg(String txt) {
-    readLocal();
-    readData();
     String userName = databaseDocuments[0]['Name'];
     String photoURL = databaseDocuments[0]['imageURL'];
     _textController.clear();
@@ -149,45 +153,31 @@ class ChatForumScreen extends State<ChatForum> with TickerProviderStateMixin {
     }).catchError((e) => print(e));
   }
 
-  @override
-  void dispose() {
-    for (Msg msg in _messages) {
-      msg.animationController.dispose();
-    }
-    super.dispose();
-  }
-
-  @override
-  Widget _buildListItem(BuildContext ctx) {
-    return new SizeTransition(
-      sizeFactor: new CurvedAnimation(
-          parent: animationController, curve: Curves.easeOut),
-      axisAlignment: 0.0,
-      child: new Container(
-        margin: const EdgeInsets.symmetric(vertical: 8.0),
-        child: new Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            new Container(
-              margin: const EdgeInsets.only(right: 18.0),
-              child: new CircleAvatar(child: new Text(defaultUserName[0])),
-            ),
-            new Expanded(
-              child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  new Text(defaultUserName,
-                      style: Theme.of(ctx).textTheme.subhead),
-                  new Container(
-                    margin: const EdgeInsets.only(top: 6.0),
-                    child: new Text(txt),
+  Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
+    return new  Container(
+            margin: const EdgeInsets.symmetric(vertical: 8.0),
+            child: new Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                new Container(
+                    margin: const EdgeInsets.only(right: 18.0),
+                    child: new CircleAvatar(
+                        backgroundImage:
+                            new NetworkImage(document['photoURL']))),
+                new Expanded(
+                  child: new Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      new Text(document['displayName'],
+                          style: new TextStyle(fontWeight: FontWeight.bold)),
+                      new Container(
+                        margin: const EdgeInsets.only(top: 6.0),
+                        child: new Text(document['content']),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                ),
+              ],
+            ));
   }
 }
