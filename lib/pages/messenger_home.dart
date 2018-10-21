@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import './chat.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final ThemeData iOSTheme = new ThemeData(
   primarySwatch: Colors.blue,
@@ -23,11 +24,20 @@ class MessengerHome extends StatefulWidget {
 }
 
 class MessengerHomeState extends State<MessengerHome> {
+  SharedPreferences prefs;
+  String id;
+  readLocal() async {
+    prefs = await SharedPreferences.getInstance();
+    id = prefs.getString("id").toString() ?? '';
+    setState(() {
+   });
+   }
   @override
   Widget build(BuildContext context) {
+    readLocal();
     return new Container(
         child: new StreamBuilder(
-            stream: Firestore.instance.collection('chatusers').snapshots(),
+            stream: Firestore.instance.collection('users').document(id).collection('chatUsers').snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) return const Text('Loading...');
               return snapshot.data != null

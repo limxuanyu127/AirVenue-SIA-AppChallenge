@@ -217,8 +217,8 @@ Future _createForum(BuildContext context) async {
                                                 .document(forumName);
                                         Map<String, String> forumData =
                                             <String, String>{
-                                          "Name": forumName,
-                                          "Description": forumDesc,
+                                          "name": forumName,
+                                          "description": forumDesc,
                                           "imageURL":
                                               "https://cdn-images-1.medium.com/max/1200/1*5-aoK8IBmXve5whBQM90GA.png",
                                           "count": "1",
@@ -332,7 +332,7 @@ class BuildForumsState extends State<BuildForums> {
                                           padding: EdgeInsets.only(bottom: 6.0),
                                           child: Text(
                                               snapshot.data.documents[i]
-                                                  ['Name'],
+                                                  ['name'],
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 color: Color(0xFF1D4886),
@@ -373,7 +373,7 @@ class BuildForumsState extends State<BuildForums> {
                                         ),
                                         Text(
                                           snapshot.data.documents[i]
-                                              ['Description'],
+                                              ['description'],
                                           style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 15.0,

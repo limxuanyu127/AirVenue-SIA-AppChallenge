@@ -18,6 +18,15 @@ class _ProfilesState extends State<Profiles> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _decriptioncontrol = new TextEditingController();
   final TextEditingController _destinationcontrol = new TextEditingController();
+  String userId;
+  SharedPreferences prefs;
+  String id;
+  readLocal() async {
+    prefs = await SharedPreferences.getInstance();
+    id = prefs.getString("id").toString() ?? '';
+    setState(() {
+   });
+   }
 
   List<String> _nationalities = new List<String>();
   String _nationality;
@@ -160,6 +169,7 @@ class _ProfilesState extends State<Profiles> {
 
   @override
   Widget build(BuildContext context) {
+    readLocal();
     return new Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(
@@ -529,8 +539,8 @@ class _ProfilesState extends State<Profiles> {
                               if (_formKey.currentState.validate()) {
                                 DocumentReference documentReference = Firestore
                                     .instance
-                                    .collection('profiles')
-                                    .document(_nickname);
+                                    .collection('users')
+                                    .document(id);
                                 Map<String, String> profilesData =
                                     <String, String>{
                                   "Name": _nickname,
@@ -545,7 +555,8 @@ class _ProfilesState extends State<Profiles> {
                                   "Destination": _destination,
                                   "Match": _selectedMatch,
                                   "imageURL":
-                                      "http://www.desiformal.com/assets/images/default-userAvatar.png"
+                                      "http://www.desiformal.com/assets/images/default-userAvatar.png",
+                                  "id": id
                                 };
                                 Navigator.of(context).pop(true);
                                 documentReference

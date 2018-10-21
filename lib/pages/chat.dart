@@ -10,7 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import './const.dart';
+import 'package:krisbook/pages/const.dart';
 
 class Chat extends StatelessWidget {
   final String peerId;
@@ -75,8 +75,19 @@ class ChatScreenState extends State<ChatScreen> {
   final ScrollController listScrollController = new ScrollController();
   final FocusNode focusNode = new FocusNode();
 
+  @override
+  void initState() {
+    super.initState();
+    focusNode.addListener(onFocusChange);
 
+    groupChatId = '';
 
+    isLoading = false;
+    isShowSticker = false;
+    imageUrl = '';
+
+    readLocal();
+  }
 
   void onFocusChange() {
     if (focusNode.hasFocus) {

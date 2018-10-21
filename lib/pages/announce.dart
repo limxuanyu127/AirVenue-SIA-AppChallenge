@@ -16,8 +16,6 @@ class Announce extends StatefulWidget {
 
 
 class AnnounceState extends State<Announce> {
-
-  String userId;
   SharedPreferences prefs;
   String id;
   readLocal() async {

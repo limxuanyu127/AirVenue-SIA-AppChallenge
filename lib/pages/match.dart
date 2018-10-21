@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import './preferred_buddy.dart' as preferred_buddy;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Match extends StatefulWidget {
   @override
@@ -103,9 +104,26 @@ class ShowInfoState extends State<ShowInfo> {
   BuildContext context;
   ShowInfoState(this.context);
   int _activeMeterIndex;
+  List<DocumentSnapshot> databaseDocuments;
+
+  SharedPreferences prefs;
+  String id;
+  readLocal() async {
+    prefs = await SharedPreferences.getInstance();
+    id = prefs.getString("id").toString() ?? '';
+    setState(() {});
+  }
 
   void _confirm() {
     confirmDialog(context).then((bool value) {});
+  }
+
+  readData() async {
+      final QuerySnapshot result = await Firestore.instance
+      .collection('users')
+      .where('id', isEqualTo: id)
+      .getDocuments();
+      databaseDocuments = result.documents;
   }
 
   Future<bool> confirmDialog(BuildContext context) {
@@ -155,9 +173,11 @@ class ShowInfoState extends State<ShowInfo> {
 
   @override
   Widget build(BuildContext context) {
+    readData();
+    readLocal();
     return Container(
       child: new StreamBuilder(
-          stream: Firestore.instance.collection('profiles').snapshots(),
+          stream: Firestore.instance.collection('users').snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) return const Text('Loading...');
             return snapshot.data != null
@@ -293,6 +313,57 @@ class ShowInfoState extends State<ShowInfo> {
                                             FlatButton(
                                               onPressed: () {
                                                 _confirm();
+                                                String chatId = snapshot
+                                                    .data.documents[i]['id'];
+                                                DocumentReference
+                                                    documentReference =
+                                                    Firestore.instance
+                                                        .collection('users')
+                                                        .document(id)
+                                                        .collection('chatUsers')
+                                                        .document(chatId);
+                                                Map<String, String>
+                                                    profilesData =
+                                                    <String, String>{
+                                                  "displayName": snapshot.data
+                                                      .documents[i]['Name'],
+                                                  "id": snapshot
+                                                      .data.documents[i]['id'],
+                                                  "photoURL": snapshot.data
+                                                      .documents[i]['imageURL'],
+                                                  "aboutMe":
+                                                      "I am a fellow passenger!",
+                                                  "type": "personal"
+                                                };
+                                                documentReference
+                                                    .setData(profilesData,
+                                                        merge: true)
+                                                    .whenComplete(() {
+                                                  print("chat created");
+                                                }).catchError((e) => print(e));
+                                                DocumentReference
+                                                    documentReference2 =
+                                                    Firestore.instance
+                                                        .collection('users')
+                                                        .document(chatId)
+                                                        .collection('chatUsers')
+                                                        .document(id);
+                                                Map<String, String>
+                                                    profilesData2 =
+                                                    <String, String>{
+                                                  "displayName": databaseDocuments[0]['Name'],
+                                                  "id": chatId,
+                                                  "photoURL": databaseDocuments[0]['imageURL'],
+                                                  "aboutMe":
+                                                      "I am a fellow passenger!",
+                                                  "type": "personal"
+                                                };
+                                                documentReference2
+                                                    .setData(profilesData2,
+                                                        merge: true)
+                                                    .whenComplete(() {
+                                                  print("other chat created");
+                                                }).catchError((e) => print("Errorrrrrrrrrrrr" + e));
                                               },
                                               child: Text("CHAT",
                                                   style: TextStyle(
