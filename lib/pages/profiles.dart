@@ -66,8 +66,8 @@ class _ProfilesState extends State<Profiles> {
   String _selectedInterests;
   @override
   void initState() {
-    _nationalities.addAll(["Singapore", "China", "Japan", "Europe", "America"]);
-    _languages.addAll(["English", "Chinese", "Malay", "Japanese", "Others"]);
+    _nationalities.addAll(["Singaporean", "Chinese", "Japanese", "European", "American"]);
+    _languages.addAll(["English", "Chinese", "Malay", "Japanese", "German","Others"]);
   }
 
   void _onChangedNat(String value) {
@@ -609,7 +609,8 @@ class _ProfilesState extends State<Profiles> {
                                 _selectedSeat != null &&
                                 _descrip != null &&
                                 _destination != null &&
-                                _selectedMatch != null) {
+                                _selectedMatch != null &&
+                                _selectedInterests != null) {
                               if (_formKey.currentState.validate()) {
                                 DocumentReference documentReference = Firestore
                                     .instance

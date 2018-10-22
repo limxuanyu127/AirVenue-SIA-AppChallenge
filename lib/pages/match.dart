@@ -289,6 +289,15 @@ class ShowInfoState extends State<ShowInfo> {
                                           ),
                                         ),
                                         Text(
+                                          "Interest: " +
+                                              snapshot.data.documents[i]
+                                                  ['interest'],
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 13.0,
+                                          ),
+                                        ),
+                                        Text(
                                           "Type Of Traveller: " +
                                               snapshot.data.documents[i]
                                                   ['Type'],
