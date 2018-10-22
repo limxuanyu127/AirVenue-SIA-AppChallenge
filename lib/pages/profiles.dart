@@ -24,9 +24,8 @@ class _ProfilesState extends State<Profiles> {
   readLocal() async {
     prefs = await SharedPreferences.getInstance();
     id = prefs.getString("id").toString() ?? '';
-    setState(() {
-   });
-   }
+    setState(() {});
+  }
 
   List<String> _nationalities = new List<String>();
   String _nationality;
@@ -62,14 +61,10 @@ class _ProfilesState extends State<Profiles> {
       _image = image;
     });
   }
+
   //
-String _selectedInterests;
+  String _selectedInterests;
   @override
-
-
-
-
-
   void initState() {
     _nationalities.addAll(["Singapore", "China", "Japan", "Europe", "America"]);
     _languages.addAll(["English", "Chinese", "Malay", "Japanese", "Others"]);
@@ -80,8 +75,9 @@ String _selectedInterests;
       _nationality = value;
     });
   }
+
 //new
-     void _onChangedInterests(String value) {
+  void _onChangedInterests(String value) {
     setState(() {
       _selectedInterests = value;
     });
@@ -530,7 +526,7 @@ String _selectedInterests;
                     ),
                   ),
                   //new addition
-                   new InputDecorator(
+                  new InputDecorator(
                     decoration: new InputDecoration(
                       border: InputBorder.none,
                       icon: Icon(Icons.group),
@@ -543,74 +539,58 @@ String _selectedInterests;
                     child: new Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-
                         new Padding(
-                                                                        padding: new EdgeInsets.only(left:10.0, right: 7.0),
-
-                                          child:    new Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            new Text('Food'),
-                        new Radio(
-                          value: 'food',
-                          groupValue: _selectedInterests,
-                          onChanged: (String value) {
-                            _onChangedInterests(value);
-                          },
-                        ),
-                        new Text('Technology'),
-                        new Radio(
-                          value: 'technology',
-                          groupValue: _selectedInterests,
-                          onChanged: (String value) {
-                            _onChangedInterests(value);
-                          },
-                        )
-                          ],
-                        ),
-
-                        ),
-
-
-
-    
-
-                        new Padding(
-                                              padding: new EdgeInsets.only(right: 10.0),
+                          padding: new EdgeInsets.only(left: 10.0, right: 7.0),
                           child: new Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            new Text('Finance'),
-                        new Radio(
-                          value: 'finance',
-                          groupValue: _selectedInterests,
-                          onChanged: (String value) {
-                            _onChangedInterests(value);
-                          },
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              new Text('Food'),
+                              new Radio(
+                                value: 'Food',
+                                groupValue: _selectedInterests,
+                                onChanged: (String value) {
+                                  _onChangedInterests(value);
+                                },
+                              ),
+                              new Text('Technology'),
+                              new Radio(
+                                value: 'Technology',
+                                groupValue: _selectedInterests,
+                                onChanged: (String value) {
+                                  _onChangedInterests(value);
+                                },
+                              )
+                            ],
+                          ),
                         ),
-                        new Text('Photography'),
-                        new Radio(
-                          value: 'photography',
-                          groupValue: _selectedInterests,
-                          onChanged: (String value) {
-                            _onChangedInterests(value);
-                          },
+                        new Padding(
+                          padding: new EdgeInsets.only(right: 10.0),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              new Text('Finance'),
+                              new Radio(
+                                value: 'Finance',
+                                groupValue: _selectedInterests,
+                                onChanged: (String value) {
+                                  _onChangedInterests(value);
+                                },
+                              ),
+                              new Text('Photography'),
+                              new Radio(
+                                value: 'Photography',
+                                groupValue: _selectedInterests,
+                                onChanged: (String value) {
+                                  _onChangedInterests(value);
+                                },
+                              )
+                            ],
+                          ),
                         )
-                          ],
-                        ),
-                        )
-
-
-                        
                       ],
                     ),
                   ),
                   //
-
-
-
-
-
 
                   new Container(
                     padding: new EdgeInsets.only(
@@ -650,7 +630,8 @@ String _selectedInterests;
                                   "Match": _selectedMatch,
                                   "imageURL":
                                       "http://www.desiformal.com/assets/images/default-userAvatar.png",
-                                  "id": id
+                                  "id": id,
+                                  "interest": _selectedInterests
                                 };
                                 Navigator.of(context).pop(true);
                                 documentReference
