@@ -33,6 +33,7 @@ class ChatForumScreen extends State<ChatForum> with TickerProviderStateMixin {
   ChatForumScreen(this.forumName);
   final TextEditingController _textController = new TextEditingController();
   bool _isWriting = false;
+  final ScrollController listScrollController = new ScrollController();
 
   SharedPreferences prefs;
   String id;
@@ -74,6 +75,7 @@ class ChatForumScreen extends State<ChatForum> with TickerProviderStateMixin {
                     padding: const EdgeInsets.all(6.0),
                     itemBuilder: (context, index) => _buildListItem(
                         context, snapshot.data.documents[index]),
+                        controller: listScrollController
                   );
                 })),
         new Divider(height: 1.0),
@@ -151,6 +153,8 @@ class ChatForumScreen extends State<ChatForum> with TickerProviderStateMixin {
     documentReference.setData(profilesData, merge: true).whenComplete(() {
       print("message added");
     }).catchError((e) => print(e));
+    listScrollController.animateTo(0.0,
+          duration: Duration(milliseconds: 300), curve: Curves.easeOut);
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {

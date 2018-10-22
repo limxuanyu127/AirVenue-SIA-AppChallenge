@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import './home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../main.dart';
 
 class EmailFieldValidator {
   static String validate(String value) {
@@ -89,7 +88,37 @@ class _LoginPageState extends State<LoginPage> {
           // await prefs.setString('aboutMe', documents[0]['aboutMe']);
           await prefs.setString('id', _bookNumber);
           await prefs.setString('lastname', _lastName);
-
+          DocumentReference documentReference = Firestore.instance
+              .collection('users')
+              .document(_bookNumber)
+              .collection('chatUsers')
+              .document('1_Chatbot');
+          Map<String, String> chatData = <String, String>{
+            "aboutMe": "I am a chatbot!",
+            "id": "SIAchatbot",
+            "photoURL":
+                "http://pluspng.com/img-png/singapore-airlines-logo-png-singapore-airlines-logo-1102.jpg",
+            "type": "personal",
+            "displayName": "EverBot"
+          };
+          documentReference.setData(chatData, merge: true).whenComplete(() {
+            print("chat created");
+          }).catchError((e) => print(e));
+          DocumentReference documentReference2 = Firestore.instance
+              .collection('users')
+              .document(_bookNumber)
+              .collection('announcements')
+              .document('1');
+          Map<String, String> announcementData = <String, String>{
+            "announcement": "Welcome to AirVenue! Thank you for choosing Singapore Airlines!",
+            "header": "AirVenue Administrator",
+            "iconURL":
+                "https://png.icons8.com/ios-glyphs/60/000000/crown.png",
+            "time": ""
+          };
+          documentReference2.setData(announcementData, merge: true).whenComplete(() {
+            print("chat created");
+          }).catchError((e) => print(e));
         }
         {
           Navigator.pushReplacement(
