@@ -221,7 +221,7 @@ Future _createForum(BuildContext context) async {
                                           "name": forumName,
                                           "description": forumDesc,
                                           "imageURL":
-                                              "https://cdn-images-1.medium.com/max/1200/1*5-aoK8IBmXve5whBQM90GA.png",
+                                              "https://cached.imagescaler.hbpl.co.uk/resize/scaleWidth/450/cached.offlinehbpl.hbpl.co.uk/news/OIC/ddw-2015021008551829.jpg",
                                           "count": "1",
                                         };
                                         documentReference
