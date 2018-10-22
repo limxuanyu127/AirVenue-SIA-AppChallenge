@@ -67,16 +67,18 @@ class ChatForumScreen extends State<ChatForum> with TickerProviderStateMixin {
                     .collection('forums')
                     .document(forumName)
                     .collection('messages')
+                    .orderBy('timestamp', descending: true)
+                    .limit(20)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return const Text('Loading...');
                   return new ListView.builder(
-                    itemCount: snapshot.data.documents.length,
-                    padding: const EdgeInsets.all(6.0),
-                    itemBuilder: (context, index) => _buildListItem(
-                        context, snapshot.data.documents[index]),
-                        controller: listScrollController
-                  );
+                      itemCount: snapshot.data.documents.length,
+                      padding: const EdgeInsets.all(6.0),
+                      itemBuilder: (context, index) => _buildListItem(
+                          context, snapshot.data.documents[index]),
+                      reverse: true,
+                      controller: listScrollController);
                 })),
         new Divider(height: 1.0),
         new Container(
@@ -99,14 +101,15 @@ class ChatForumScreen extends State<ChatForum> with TickerProviderStateMixin {
               new Flexible(
                 child: new TextField(
                   controller: _textController,
+                  decoration: InputDecoration.collapsed(
+                  hintText: 'Type your message...',
+                  hintStyle: TextStyle(color: Colors.grey)),
                   onChanged: (String txt) {
                     setState(() {
                       _isWriting = txt.length > 0;
                     });
                   },
                   onSubmitted: _submitMsg,
-                  decoration: new InputDecoration.collapsed(
-                      hintText: "Enter some text to send a message"),
                 ),
               ),
               new Container(
@@ -149,39 +152,39 @@ class ChatForumScreen extends State<ChatForum> with TickerProviderStateMixin {
       "id": DateTime.now().millisecondsSinceEpoch.toString(),
       "photoURL": photoURL,
       "content": txt,
+      "timestamp": DateTime.now().millisecondsSinceEpoch.toString()
     };
     documentReference.setData(profilesData, merge: true).whenComplete(() {
       print("message added");
     }).catchError((e) => print(e));
     listScrollController.animateTo(0.0,
-          duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+        duration: Duration(milliseconds: 300), curve: Curves.easeOut);
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
-    return new  Container(
-            margin: const EdgeInsets.symmetric(vertical: 8.0),
-            child: new Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                new Container(
-                    margin: const EdgeInsets.only(right: 18.0),
-                    child: new CircleAvatar(
-                        backgroundImage:
-                            new NetworkImage(document['photoURL']))),
-                new Expanded(
-                  child: new Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      new Text(document['displayName'],
-                          style: new TextStyle(fontWeight: FontWeight.bold)),
-                      new Container(
-                        margin: const EdgeInsets.only(top: 6.0),
-                        child: new Text(document['content']),
-                      ),
-                    ],
+    return new Container(
+        margin: const EdgeInsets.symmetric(vertical: 8.0),
+        child: new Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            new Container(
+                margin: const EdgeInsets.only(right: 18.0),
+                child: new CircleAvatar(
+                    backgroundImage: new NetworkImage(document['photoURL']))),
+            new Expanded(
+              child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  new Text(document['displayName'],
+                      style: new TextStyle(fontWeight: FontWeight.bold)),
+                  new Container(
+                    margin: const EdgeInsets.only(top: 6.0),
+                    child: new Text(document['content']),
                   ),
-                ),
-              ],
-            ));
+                ],
+              ),
+            ),
+          ],
+        ));
   }
 }
