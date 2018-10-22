@@ -63,8 +63,13 @@ class _ProfilesState extends State<Profiles> {
     });
   }
   //
-
+String _selectedInterests;
   @override
+
+
+
+
+
   void initState() {
     _nationalities.addAll(["Singapore", "China", "Japan", "Europe", "America"]);
     _languages.addAll(["English", "Chinese", "Malay", "Japanese", "Others"]);
@@ -73,6 +78,12 @@ class _ProfilesState extends State<Profiles> {
   void _onChangedNat(String value) {
     setState(() {
       _nationality = value;
+    });
+  }
+//new
+     void _onChangedInterests(String value) {
+    setState(() {
+      _selectedInterests = value;
     });
   }
 
@@ -518,6 +529,89 @@ class _ProfilesState extends State<Profiles> {
                       ],
                     ),
                   ),
+                  //new addition
+                   new InputDecorator(
+                    decoration: new InputDecoration(
+                      border: InputBorder.none,
+                      icon: Icon(Icons.group),
+                      labelStyle: TextStyle(fontSize: 23.0),
+                      labelText: ('Your Interests:'),
+                    ),
+                  ),
+                  new Padding(
+                    padding: new EdgeInsets.only(left: 40.0),
+                    child: new Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+
+                        new Padding(
+                                                                        padding: new EdgeInsets.only(left:10.0, right: 7.0),
+
+                                          child:    new Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            new Text('Food'),
+                        new Radio(
+                          value: 'food',
+                          groupValue: _selectedInterests,
+                          onChanged: (String value) {
+                            _onChangedInterests(value);
+                          },
+                        ),
+                        new Text('Technology'),
+                        new Radio(
+                          value: 'technology',
+                          groupValue: _selectedInterests,
+                          onChanged: (String value) {
+                            _onChangedInterests(value);
+                          },
+                        )
+                          ],
+                        ),
+
+                        ),
+
+
+
+    
+
+                        new Padding(
+                                              padding: new EdgeInsets.only(right: 10.0),
+                          child: new Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            new Text('Finance'),
+                        new Radio(
+                          value: 'finance',
+                          groupValue: _selectedInterests,
+                          onChanged: (String value) {
+                            _onChangedInterests(value);
+                          },
+                        ),
+                        new Text('Photography'),
+                        new Radio(
+                          value: 'photography',
+                          groupValue: _selectedInterests,
+                          onChanged: (String value) {
+                            _onChangedInterests(value);
+                          },
+                        )
+                          ],
+                        ),
+                        )
+
+
+                        
+                      ],
+                    ),
+                  ),
+                  //
+
+
+
+
+
+
                   new Container(
                     padding: new EdgeInsets.only(
                         top: 20.0, left: 300.0, bottom: 20.0),

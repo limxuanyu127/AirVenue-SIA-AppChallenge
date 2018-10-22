@@ -8,6 +8,14 @@ class PreferredBuddy extends StatefulWidget {
 }
 
 class _PreferredBuddyState extends State<PreferredBuddy> {
+  String _selectedBuddyInterests;
+  //new
+  void _onChangedBuddyInterests(String value) {
+    setState(() {
+      _selectedBuddyInterests = value;
+    });
+  }
+
   //1st checkbox:
 
   bool _isChecked1 = false;
@@ -277,6 +285,73 @@ class _PreferredBuddyState extends State<PreferredBuddy> {
                         },
                       )
                     ])),
+
+            //new addition
+            new InputDecorator(
+              decoration: new InputDecoration(
+                border: InputBorder.none,
+                icon: Icon(Icons.group),
+                labelStyle: TextStyle(fontSize: 23.0),
+                labelText: ('His/Her Interests:'),
+              ),
+            ),
+            new Padding(
+              padding: new EdgeInsets.only(left: 40.0),
+              child: new Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  new Padding(
+                    padding: new EdgeInsets.only(left: 10.0, right: 7.0),
+                    child: new Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        new Text('Food'),
+                        new Radio(
+                          value: 'food',
+                          groupValue: _selectedBuddyInterests,
+                          onChanged: (String value) {
+                            _onChangedBuddyInterests(value);
+                          },
+                        ),
+                        new Text('Technology'),
+                        new Radio(
+                          value: 'technology',
+                          groupValue: _selectedBuddyInterests,
+                          onChanged: (String value) {
+                            _onChangedBuddyInterests(value);
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                  new Padding(
+                    padding: new EdgeInsets.only(right: 10.0),
+                    child: new Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        new Text('Finance'),
+                        new Radio(
+                          value: 'finance',
+                          groupValue: _selectedBuddyInterests,
+                          onChanged: (String value) {
+                            _onChangedBuddyInterests(value);
+                          },
+                        ),
+                        new Text('Photography'),
+                        new Radio(
+                          value: 'photography',
+                          groupValue: _selectedBuddyInterests,
+                          onChanged: (String value) {
+                            _onChangedBuddyInterests(value);
+                          },
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+            //
             new Container(
               padding:
                   new EdgeInsets.only(top: 20.0, left: 300.0, bottom: 20.0),
