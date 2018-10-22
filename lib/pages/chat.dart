@@ -624,13 +624,13 @@ class ChatScreenState extends State<ChatScreen> {
             ),
           ),
 
-          Material(
-            child: new Container(
-              child: new IconButton(
-                  icon: new Icon(Icons.keyboard_voice), onPressed: () {}),
-            ),
-            color: Colors.white,
-          ),
+          // Material(
+          //   child: new Container(
+          //     child: new IconButton(
+          //         icon: new Icon(Icons.keyboard_voice), onPressed: () {}),
+          //   ),
+          //   color: Colors.white,
+          // ),
 
           // Button send message
           Material(

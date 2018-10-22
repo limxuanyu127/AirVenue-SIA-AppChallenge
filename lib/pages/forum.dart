@@ -302,7 +302,7 @@ class BuildForumsState extends State<BuildForums> {
     readLocal();
     return Container(
       child: new StreamBuilder(
-          stream: Firestore.instance.collection('forums').snapshots(),
+          stream: Firestore.instance.collection('forums').orderBy('count', descending: true).snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) return const Text('Loading...');
             return snapshot.data != null
