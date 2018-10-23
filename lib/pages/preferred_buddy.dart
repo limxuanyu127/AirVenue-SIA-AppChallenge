@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-=======
->>>>>>> hanzhe
 
 class PreferredBuddy extends StatefulWidget {
   @override
@@ -13,7 +10,6 @@ class PreferredBuddy extends StatefulWidget {
 }
 
 class _PreferredBuddyState extends State<PreferredBuddy> {
-<<<<<<< HEAD
   String _selectedBuddyInterests;
   //new
   void _onChangedBuddyInterests(String value) {
@@ -31,8 +27,6 @@ class _PreferredBuddyState extends State<PreferredBuddy> {
     setState(() {});
   }
 
-=======
->>>>>>> hanzhe
   //1st checkbox:
 
   bool _isChecked1 = false;
@@ -131,7 +125,6 @@ class _PreferredBuddyState extends State<PreferredBuddy> {
     });
   }
 
-<<<<<<< HEAD
   void _confirm() {
     confirmDialog(context).then((bool value) {});
   }
@@ -159,10 +152,6 @@ class _PreferredBuddyState extends State<PreferredBuddy> {
   @override
   Widget build(BuildContext context) {
     readLocal();
-=======
-  @override
-  Widget build(BuildContext context) {
->>>>>>> hanzhe
     return Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(
@@ -332,7 +321,6 @@ class _PreferredBuddyState extends State<PreferredBuddy> {
                         },
                       )
                     ])),
-<<<<<<< HEAD
 
             //new addition
             new InputDecorator(
@@ -400,8 +388,6 @@ class _PreferredBuddyState extends State<PreferredBuddy> {
               ),
             ),
             //
-=======
->>>>>>> hanzhe
             new Container(
               padding:
                   new EdgeInsets.only(top: 20.0, left: 300.0, bottom: 20.0),
@@ -411,7 +397,6 @@ class _PreferredBuddyState extends State<PreferredBuddy> {
                 child: new FloatingActionButton(
                     backgroundColor: new Color(0xFF1D4886),
                     onPressed: () {
-<<<<<<< HEAD
                       DocumentReference documentReference = Firestore.instance
                           .collection('users')
                           .document(id)
@@ -437,8 +422,6 @@ class _PreferredBuddyState extends State<PreferredBuddy> {
                         print("filter changed");
                       }).catchError((e) => print(e));
                       _confirm();
-=======
->>>>>>> hanzhe
                       Navigator.of(context).pop();
                     },
                     child: Center(

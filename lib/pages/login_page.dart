@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
 import './home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-<<<<<<< HEAD
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-=======
-// import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../main.dart';
->>>>>>> hanzhe
 
 class EmailFieldValidator {
   static String validate(String value) {
@@ -94,7 +88,6 @@ class _LoginPageState extends State<LoginPage> {
           // await prefs.setString('aboutMe', documents[0]['aboutMe']);
           await prefs.setString('id', _bookNumber);
           await prefs.setString('lastname', _lastName);
-<<<<<<< HEAD
           DocumentReference documentReference = Firestore.instance
               .collection('users')
               .document(_bookNumber)
@@ -126,9 +119,6 @@ class _LoginPageState extends State<LoginPage> {
           documentReference2.setData(announcementData, merge: true).whenComplete(() {
             print("chat created");
           }).catchError((e) => print(e));
-=======
-
->>>>>>> hanzhe
         }
         {
           Navigator.pushReplacement(
