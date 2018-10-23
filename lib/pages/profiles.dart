@@ -24,9 +24,8 @@ class _ProfilesState extends State<Profiles> {
   readLocal() async {
     prefs = await SharedPreferences.getInstance();
     id = prefs.getString("id").toString() ?? '';
-    setState(() {
-   });
-   }
+    setState(() {});
+  }
 
   List<String> _nationalities = new List<String>();
   String _nationality;
@@ -41,6 +40,7 @@ class _ProfilesState extends State<Profiles> {
   String _selectedGender;
   String _selectedTraveller;
   String _selectedMatch;
+  String _selectedTranslation;
 
   String _descrip;
   String _destination;
@@ -62,12 +62,18 @@ class _ProfilesState extends State<Profiles> {
       _image = image;
     });
   }
-  //
 
+  //
+  String _selectedInterests;
   @override
   void initState() {
+<<<<<<< HEAD
     _nationalities.addAll(["Singapore", "China", "Japan", "Europe", "America"]);
     _languages.addAll(["English", "Chinese", "Malay", "Japanese", "German", "Others"]);
+=======
+    _nationalities.addAll(["Singaporean", "Chinese", "Japanese", "European", "American"]);
+    _languages.addAll(["English", "German", "Italian", "French", "Japanese", "Others"]);
+>>>>>>> ba5ea2c4deec8ec5f55529a1799a99187627c959
   }
 
   void _onChangedNat(String value) {
@@ -76,9 +82,22 @@ class _ProfilesState extends State<Profiles> {
     });
   }
 
+//new
+  void _onChangedInterests(String value) {
+    setState(() {
+      _selectedInterests = value;
+    });
+  }
+
   void _onChangedSeat(String value) {
     setState(() {
       _selectedSeat = value;
+    });
+  }
+
+   void _onChangedTranslation(String value) {
+    setState(() {
+      _selectedTranslation = value;
     });
   }
 
@@ -344,9 +363,38 @@ class _ProfilesState extends State<Profiles> {
                                 }).toList(),
                                 onChanged: (String value) {
                                   _onChangedLang2(value);
-                                })
+                                }),
                           ],
                         ),
+                      ),
+                      new InputDecorator(
+                        decoration: new InputDecoration(
+                          border: InputBorder.none,
+                          icon: Icon(Icons.g_translate),
+                          labelStyle: TextStyle(fontSize: 20.0),
+                          labelText: ('Translation to your first language?'),
+                        ),
+                      ),
+                      new Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          new Text('Yes'),
+                          new Radio(
+                            value: 'true',
+                            groupValue: _selectedTranslation,
+                            onChanged: (String value) {
+                              _onChangedTranslation(value);
+                            },
+                          ),
+                          new Text('No'),
+                          new Radio(
+                            value: 'false',
+                            groupValue: _selectedTranslation,
+                            onChanged: (String value) {
+                              _onChangedTranslation(value);
+                            },
+                          ),
+                        ],
                       ),
                     ])),
               ),
@@ -518,6 +566,73 @@ class _ProfilesState extends State<Profiles> {
                       ],
                     ),
                   ),
+                  //new addition
+                  new InputDecorator(
+                    decoration: new InputDecoration(
+                      border: InputBorder.none,
+                      icon: Icon(Icons.group),
+                      labelStyle: TextStyle(fontSize: 23.0),
+                      labelText: ('Your Interests:'),
+                    ),
+                  ),
+                  new Padding(
+                    padding: new EdgeInsets.only(left: 40.0),
+                    child: new Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        new Padding(
+                          padding: new EdgeInsets.only(left: 10.0, right: 7.0),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              new Text('Food'),
+                              new Radio(
+                                value: 'Food',
+                                groupValue: _selectedInterests,
+                                onChanged: (String value) {
+                                  _onChangedInterests(value);
+                                },
+                              ),
+                              new Text('Technology'),
+                              new Radio(
+                                value: 'Technology',
+                                groupValue: _selectedInterests,
+                                onChanged: (String value) {
+                                  _onChangedInterests(value);
+                                },
+                              )
+                            ],
+                          ),
+                        ),
+                        new Padding(
+                          padding: new EdgeInsets.only(right: 10.0),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              new Text('Finance'),
+                              new Radio(
+                                value: 'Finance',
+                                groupValue: _selectedInterests,
+                                onChanged: (String value) {
+                                  _onChangedInterests(value);
+                                },
+                              ),
+                              new Text('Photography'),
+                              new Radio(
+                                value: 'Photography',
+                                groupValue: _selectedInterests,
+                                onChanged: (String value) {
+                                  _onChangedInterests(value);
+                                },
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  //
+
                   new Container(
                     padding: new EdgeInsets.only(
                         top: 20.0, left: 300.0, bottom: 20.0),
@@ -535,14 +650,15 @@ class _ProfilesState extends State<Profiles> {
                                 _selectedSeat != null &&
                                 _descrip != null &&
                                 _destination != null &&
-                                _selectedMatch != null) {
+                                _selectedMatch != null &&
+                                _selectedInterests != null) {
                               if (_formKey.currentState.validate()) {
                                 DocumentReference documentReference = Firestore
                                     .instance
                                     .collection('users')
                                     .document(id);
-                                Map<String, String> profilesData =
-                                    <String, String>{
+                                Map<String, dynamic> profilesData =
+                                    <String, dynamic>{
                                   "Name": _nickname,
                                   "Gender": _selectedGender,
                                   "Age": stringAge,
@@ -556,7 +672,10 @@ class _ProfilesState extends State<Profiles> {
                                   "Match": _selectedMatch,
                                   "imageURL":
                                       "http://www.desiformal.com/assets/images/default-userAvatar.png",
-                                  "id": id
+                                  "id": id,
+                                  "interest": _selectedInterests,
+                                  "filter": 'no',
+                                  "wantsTranslation": _selectedTranslation
                                 };
                                 Navigator.of(context).pop(true);
                                 documentReference

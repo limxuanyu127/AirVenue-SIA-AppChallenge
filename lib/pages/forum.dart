@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Forum extends StatefulWidget {
   @override
@@ -220,7 +221,7 @@ Future _createForum(BuildContext context) async {
                                           "name": forumName,
                                           "description": forumDesc,
                                           "imageURL":
-                                              "https://cdn-images-1.medium.com/max/1200/1*5-aoK8IBmXve5whBQM90GA.png",
+                                              "https://d30zbujsp7ao6j.cloudfront.net/wp-content/uploads/2017/07/unnamed.png",
                                           "count": "1",
                                         };
                                         documentReference
@@ -264,6 +265,14 @@ class BuildForumsState extends State<BuildForums> {
   BuildForumsState(this.context);
   int _activeMeterIndex;
 
+  SharedPreferences prefs;
+  String id;
+  readLocal() async {
+    prefs = await SharedPreferences.getInstance();
+    id = prefs.getString("id").toString() ?? '';
+    setState(() {});
+  }
+
   void _confirm() {
     confirmDialog(context).then((bool value) {});
   }
@@ -290,9 +299,10 @@ class BuildForumsState extends State<BuildForums> {
 
   @override
   Widget build(BuildContext context) {
+    readLocal();
     return Container(
       child: new StreamBuilder(
-          stream: Firestore.instance.collection('forums').snapshots(),
+          stream: Firestore.instance.collection('forums').orderBy('count', descending: true).snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) return const Text('Loading...');
             return snapshot.data != null
@@ -386,6 +396,33 @@ class BuildForumsState extends State<BuildForums> {
                                             FlatButton(
                                               onPressed: () {
                                                 _confirm();
+                                                String forumId = snapshot
+                                                    .data.documents[i]['name'];
+                                                DocumentReference
+                                                    documentReference =
+                                                    Firestore.instance
+                                                        .collection('users')
+                                                        .document(id)
+                                                        .collection('chatUsers')
+                                                        .document(forumId);
+                                                Map<String, String> forumsData =
+                                                    <String, String>{
+                                                  "displayName": snapshot.data
+                                                      .documents[i]['name'],
+                                                  "id": snapshot.data
+                                                      .documents[i]['name'],
+                                                  "photoURL": snapshot.data
+                                                      .documents[i]['imageURL'],
+                                                  "aboutMe":
+                                                      "Join in the discussion here!",
+                                                  "type": "forum"
+                                                };
+                                                documentReference
+                                                    .setData(forumsData,
+                                                        merge: true)
+                                                    .whenComplete(() {
+                                                  print("forum created");
+                                                }).catchError((e) => print(e));
                                               },
                                               child: Text("JOIN FORUM",
                                                   style: TextStyle(

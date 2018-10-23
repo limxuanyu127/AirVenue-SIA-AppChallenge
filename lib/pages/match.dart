@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import './preferred_buddy.dart' as preferred_buddy;
 import 'package:shared_preferences/shared_preferences.dart';
 
+// WORK
 class Match extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -105,6 +106,7 @@ class ShowInfoState extends State<ShowInfo> {
   ShowInfoState(this.context);
   int _activeMeterIndex;
   List<DocumentSnapshot> databaseDocuments;
+  List<DocumentSnapshot> usersDocuments;
 
   SharedPreferences prefs;
   String id;
@@ -119,11 +121,17 @@ class ShowInfoState extends State<ShowInfo> {
   }
 
   readData() async {
-      final QuerySnapshot result = await Firestore.instance
-      .collection('users')
-      .where('id', isEqualTo: id)
-      .getDocuments();
-      databaseDocuments = result.documents;
+    final QuerySnapshot result = await Firestore.instance
+        .collection('users')
+        .where('id', isEqualTo: id)
+        .getDocuments();
+    databaseDocuments = result.documents;
+  }
+
+  readUsers() async {
+    final QuerySnapshot result =
+        await Firestore.instance.collection('users').getDocuments();
+    usersDocuments = result.documents;
   }
 
   Future<bool> confirmDialog(BuildContext context) {
@@ -171,13 +179,50 @@ class ShowInfoState extends State<ShowInfo> {
         });
   }
 
+  List<DocumentSnapshot> filterDocuments;
+  readData2() async {
+    final QuerySnapshot result = await Firestore.instance
+        .collection('users')
+        .document(id)
+        .collection('filters')
+        .getDocuments();
+    filterDocuments = result.documents;
+  }
+
+  List<DocumentSnapshot> userDocuments;
+  readUser() async {
+    final QuerySnapshot result =
+        await Firestore.instance.collection('users').getDocuments();
+    userDocuments = result.documents;
+  }
+
+  Stream dataStream() {
+    Stream stream;
+    String interest;
+    if (databaseDocuments[0]['filter'] == 'yes') {
+        interest = filterDocuments[0]['interest'];
+        stream = Firestore.instance
+        .collection('users')
+        .where('interest', isEqualTo: interest)
+        .where('Match', isEqualTo: 'Yes')
+        .snapshots();
+    } else{
+    stream = Firestore.instance
+        .collection('users')
+        .where('Match', isEqualTo: 'Yes')
+        .snapshots();
+    }
+    return stream;
+  }
+
+//new new
   @override
   Widget build(BuildContext context) {
     readData();
     readLocal();
     return Container(
       child: new StreamBuilder(
-          stream: Firestore.instance.collection('users').snapshots(),
+          stream: dataStream(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) return const Text('Loading...');
             return snapshot.data != null
@@ -185,6 +230,14 @@ class ShowInfoState extends State<ShowInfo> {
                     itemCount: snapshot.data.documents.length,
                     padding: const EdgeInsets.only(top: 10.0),
                     itemBuilder: (BuildContext context, int i) {
+                      // if (snapshot.data.documents[i]['id'] != id)
+                      // if (databaseDocuments[0]['filter'] == 'yes') {
+                      //   if (snapshot.data.documents[i]['interest'] == interest) {
+                      //       return _buildListItem(context, snapshot.data.documents[i], i);
+                      //   }
+                      // } else
+                      // return _buildListItem(
+                      //     context, snapshot.data.documents[i], i);
                       return Card(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20.0)),
@@ -289,6 +342,15 @@ class ShowInfoState extends State<ShowInfo> {
                                           ),
                                         ),
                                         Text(
+                                          "Interest: " +
+                                              snapshot.data.documents[i]
+                                                  ['interest'],
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 13.0,
+                                          ),
+                                        ),
+                                        Text(
                                           "Type Of Traveller: " +
                                               snapshot.data.documents[i]
                                                   ['Type'],
@@ -351,9 +413,13 @@ class ShowInfoState extends State<ShowInfo> {
                                                 Map<String, String>
                                                     profilesData2 =
                                                     <String, String>{
-                                                  "displayName": databaseDocuments[0]['Name'],
+                                                  "displayName":
+                                                      databaseDocuments[0]
+                                                          ['Name'],
                                                   "id": chatId,
-                                                  "photoURL": databaseDocuments[0]['imageURL'],
+                                                  "photoURL":
+                                                      databaseDocuments[0]
+                                                          ['imageURL'],
                                                   "aboutMe":
                                                       "I am a fellow passenger!",
                                                   "type": "personal"
@@ -363,7 +429,9 @@ class ShowInfoState extends State<ShowInfo> {
                                                         merge: true)
                                                     .whenComplete(() {
                                                   print("other chat created");
-                                                }).catchError((e) => print("Errorrrrrrrrrrrr" + e));
+                                                }).catchError((e) => print(
+                                                        "Errorrrrrrrrrrrr" +
+                                                            e));
                                               },
                                               child: Text("CHAT",
                                                   style: TextStyle(
@@ -391,6 +459,184 @@ class ShowInfoState extends State<ShowInfo> {
                     })
                 : new Container();
           }),
+    );
+  }
+
+  Widget _buildListItem(
+      BuildContext context, DocumentSnapshot document, int i) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+      elevation: 3.0,
+      margin: const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 0.0),
+      child: new ExpansionPanelList(
+        expansionCallback: (int index, bool status) {
+          setState(() {
+            _activeMeterIndex = _activeMeterIndex == i ? null : i;
+          });
+        },
+        children: [
+          new ExpansionPanel(
+            isExpanded: _activeMeterIndex == i,
+            headerBuilder: (BuildContext context, bool isExpanded) =>
+                new Container(
+                    padding: EdgeInsets.fromLTRB(5.0, 5.0, 0.0, 5.0),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: new NetworkImage(document['imageURL']),
+                        radius: 32.0,
+                      ),
+                      title: Container(
+                        padding: EdgeInsets.only(bottom: 6.0),
+                        child: Text(document['Name'],
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF1D4886),
+                              fontSize: 15.0,
+                            ),
+                            overflow: TextOverflow.clip),
+                      ),
+                      subtitle: Text("Gender: " +
+                          document['Gender'] +
+                          " \nAge: " +
+                          document['Age']),
+                    )),
+            body: new Card(
+                elevation: 4.0,
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
+                margin: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0),
+                child: Container(
+                  padding: EdgeInsets.all(10.0),
+                  child: new Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.only(bottom: 5.0),
+                        child: Text(
+                          "Profile",
+                          style: TextStyle(
+                            color: Color(0xFF1D4886),
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        "Description: " + document['Description'],
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 13.0,
+                        ),
+                      ),
+                      Text(
+                        "Languages: " +
+                            document['Languages1'] +
+                            " & " +
+                            document['Languages2'],
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 13.0,
+                        ),
+                      ),
+                      Text(
+                        "Nationality: " + document['Nationality'],
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 13.0,
+                        ),
+                      ),
+                      Text(
+                        "Interest: " + document['interest'],
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 13.0,
+                        ),
+                      ),
+                      Text(
+                        "Type Of Traveller: " + document['Type'],
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 13.0,
+                        ),
+                      ),
+                      Text(
+                        "Next Destination: " + document['Destination'],
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 13.0,
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          FlatButton(
+                            onPressed: () {
+                              _confirm();
+                              String chatId = document['id'];
+                              DocumentReference documentReference = Firestore
+                                  .instance
+                                  .collection('users')
+                                  .document(id)
+                                  .collection('chatUsers')
+                                  .document(chatId);
+                              Map<String, String> profilesData =
+                                  <String, String>{
+                                "displayName": document['Name'],
+                                "id": document['id'],
+                                "photoURL": document['imageURL'],
+                                "aboutMe": "I am a fellow passenger!",
+                                "type": "personal"
+                              };
+                              documentReference
+                                  .setData(profilesData, merge: true)
+                                  .whenComplete(() {
+                                print("chat created");
+                              }).catchError((e) => print(e));
+                              DocumentReference documentReference2 = Firestore
+                                  .instance
+                                  .collection('users')
+                                  .document(chatId)
+                                  .collection('chatUsers')
+                                  .document(id);
+                              Map<String, String> profilesData2 =
+                                  <String, String>{
+                                "displayName": databaseDocuments[0]['Name'],
+                                "id": chatId,
+                                "photoURL": databaseDocuments[0]['imageURL'],
+                                "aboutMe": "I am a fellow passenger!",
+                                "type": "personal"
+                              };
+                              documentReference2
+                                  .setData(profilesData2, merge: true)
+                                  .whenComplete(() {
+                                print("other chat created");
+                              }).catchError(
+                                      (e) => print("Errorrrrrrrrrrrr" + e));
+                            },
+                            child: Text("CHAT",
+                                style: TextStyle(
+                                  color: Color(0xFF1D4886),
+                                )),
+                          ),
+                          FlatButton(
+                            onPressed: () {
+                              _confirm2();
+                            },
+                            child: Text("MATCH",
+                                style: TextStyle(
+                                  color: Color(0xFF1D4886),
+                                )),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                )),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferredBuddy extends StatefulWidget {
   @override
@@ -8,6 +10,23 @@ class PreferredBuddy extends StatefulWidget {
 }
 
 class _PreferredBuddyState extends State<PreferredBuddy> {
+  String _selectedBuddyInterests;
+  //new
+  void _onChangedBuddyInterests(String value) {
+    setState(() {
+      _selectedBuddyInterests = value;
+    });
+  }
+
+  String userId;
+  SharedPreferences prefs;
+  String id;
+  readLocal() async {
+    prefs = await SharedPreferences.getInstance();
+    id = prefs.getString("id").toString() ?? '';
+    setState(() {});
+  }
+
   //1st checkbox:
 
   bool _isChecked1 = false;
@@ -106,8 +125,33 @@ class _PreferredBuddyState extends State<PreferredBuddy> {
     });
   }
 
+  void _confirm() {
+    confirmDialog(context).then((bool value) {});
+  }
+
+  Future<bool> confirmDialog(BuildContext context) {
+    return showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return new AlertDialog(
+            title: new Text("Updated!"),
+            content: new Text("KrisMatch list has been updated!"),
+            actions: <Widget>[
+              new FlatButton(
+                child: const Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              )
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
+    readLocal();
     return Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(
@@ -277,6 +321,73 @@ class _PreferredBuddyState extends State<PreferredBuddy> {
                         },
                       )
                     ])),
+
+            //new addition
+            new InputDecorator(
+              decoration: new InputDecoration(
+                border: InputBorder.none,
+                icon: Icon(Icons.group),
+                labelStyle: TextStyle(fontSize: 23.0),
+                labelText: ('His/Her Interests:'),
+              ),
+            ),
+            new Padding(
+              padding: new EdgeInsets.only(left: 40.0),
+              child: new Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  new Padding(
+                    padding: new EdgeInsets.only(left: 10.0, right: 7.0),
+                    child: new Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        new Text('Food'),
+                        new Radio(
+                          value: 'Food',
+                          groupValue: _selectedBuddyInterests,
+                          onChanged: (String value) {
+                            _onChangedBuddyInterests(value);
+                          },
+                        ),
+                        new Text('Technology'),
+                        new Radio(
+                          value: 'Technology',
+                          groupValue: _selectedBuddyInterests,
+                          onChanged: (String value) {
+                            _onChangedBuddyInterests(value);
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                  new Padding(
+                    padding: new EdgeInsets.only(right: 10.0),
+                    child: new Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        new Text('Finance'),
+                        new Radio(
+                          value: 'Finance',
+                          groupValue: _selectedBuddyInterests,
+                          onChanged: (String value) {
+                            _onChangedBuddyInterests(value);
+                          },
+                        ),
+                        new Text('Photography'),
+                        new Radio(
+                          value: 'Photography',
+                          groupValue: _selectedBuddyInterests,
+                          onChanged: (String value) {
+                            _onChangedBuddyInterests(value);
+                          },
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+            //
             new Container(
               padding:
                   new EdgeInsets.only(top: 20.0, left: 300.0, bottom: 20.0),
@@ -286,6 +397,31 @@ class _PreferredBuddyState extends State<PreferredBuddy> {
                 child: new FloatingActionButton(
                     backgroundColor: new Color(0xFF1D4886),
                     onPressed: () {
+                      DocumentReference documentReference = Firestore.instance
+                          .collection('users')
+                          .document(id)
+                          .collection('filters')
+                          .document('filter');
+                      Map<String, String> filterData = <String, String>{
+                        "interest": _selectedBuddyInterests
+                      };
+                      documentReference
+                          .setData(filterData, merge: true)
+                          .whenComplete(() {
+                        print("filter created");
+                      }).catchError((e) => print(e));
+                      DocumentReference documentReference2 = Firestore.instance
+                          .collection('users')
+                          .document(id);
+                      Map<String, String> filterOption = <String, String>{
+                        "filter": 'yes'
+                      };
+                      documentReference2
+                          .setData(filterOption, merge: true)
+                          .whenComplete(() {
+                        print("filter changed");
+                      }).catchError((e) => print(e));
+                      _confirm();
                       Navigator.of(context).pop();
                     },
                     child: Center(
