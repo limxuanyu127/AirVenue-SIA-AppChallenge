@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferredBuddy extends StatefulWidget {
   @override
@@ -14,6 +16,15 @@ class _PreferredBuddyState extends State<PreferredBuddy> {
     setState(() {
       _selectedBuddyInterests = value;
     });
+  }
+
+  String userId;
+  SharedPreferences prefs;
+  String id;
+  readLocal() async {
+    prefs = await SharedPreferences.getInstance();
+    id = prefs.getString("id").toString() ?? '';
+    setState(() {});
   }
 
   //1st checkbox:
@@ -114,8 +125,33 @@ class _PreferredBuddyState extends State<PreferredBuddy> {
     });
   }
 
+  void _confirm() {
+    confirmDialog(context).then((bool value) {});
+  }
+
+  Future<bool> confirmDialog(BuildContext context) {
+    return showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return new AlertDialog(
+            title: new Text("Updated!"),
+            content: new Text("KrisMatch list has been updated!"),
+            actions: <Widget>[
+              new FlatButton(
+                child: const Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              )
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
+    readLocal();
     return Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(
@@ -307,7 +343,7 @@ class _PreferredBuddyState extends State<PreferredBuddy> {
                       children: <Widget>[
                         new Text('Food'),
                         new Radio(
-                          value: 'food',
+                          value: 'Food',
                           groupValue: _selectedBuddyInterests,
                           onChanged: (String value) {
                             _onChangedBuddyInterests(value);
@@ -315,7 +351,7 @@ class _PreferredBuddyState extends State<PreferredBuddy> {
                         ),
                         new Text('Technology'),
                         new Radio(
-                          value: 'technology',
+                          value: 'Technology',
                           groupValue: _selectedBuddyInterests,
                           onChanged: (String value) {
                             _onChangedBuddyInterests(value);
@@ -331,7 +367,7 @@ class _PreferredBuddyState extends State<PreferredBuddy> {
                       children: <Widget>[
                         new Text('Finance'),
                         new Radio(
-                          value: 'finance',
+                          value: 'Finance',
                           groupValue: _selectedBuddyInterests,
                           onChanged: (String value) {
                             _onChangedBuddyInterests(value);
@@ -339,7 +375,7 @@ class _PreferredBuddyState extends State<PreferredBuddy> {
                         ),
                         new Text('Photography'),
                         new Radio(
-                          value: 'photography',
+                          value: 'Photography',
                           groupValue: _selectedBuddyInterests,
                           onChanged: (String value) {
                             _onChangedBuddyInterests(value);
@@ -361,6 +397,31 @@ class _PreferredBuddyState extends State<PreferredBuddy> {
                 child: new FloatingActionButton(
                     backgroundColor: new Color(0xFF1D4886),
                     onPressed: () {
+                      DocumentReference documentReference = Firestore.instance
+                          .collection('users')
+                          .document(id)
+                          .collection('filters')
+                          .document('filter');
+                      Map<String, String> filterData = <String, String>{
+                        "interest": _selectedBuddyInterests
+                      };
+                      documentReference
+                          .setData(filterData, merge: true)
+                          .whenComplete(() {
+                        print("filter created");
+                      }).catchError((e) => print(e));
+                      DocumentReference documentReference2 = Firestore.instance
+                          .collection('users')
+                          .document(id);
+                      Map<String, String> filterOption = <String, String>{
+                        "filter": 'yes'
+                      };
+                      documentReference2
+                          .setData(filterOption, merge: true)
+                          .whenComplete(() {
+                        print("filter changed");
+                      }).catchError((e) => print(e));
+                      _confirm();
                       Navigator.of(context).pop();
                     },
                     child: Center(
