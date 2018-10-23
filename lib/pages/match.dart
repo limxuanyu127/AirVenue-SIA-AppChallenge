@@ -4,7 +4,10 @@ import 'package:flutter_test/flutter_test.dart';
 import './preferred_buddy.dart' as preferred_buddy;
 import 'package:shared_preferences/shared_preferences.dart';
 
+<<<<<<< HEAD
 // WORK
+=======
+>>>>>>> hanzhe
 class Match extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -106,7 +109,10 @@ class ShowInfoState extends State<ShowInfo> {
   ShowInfoState(this.context);
   int _activeMeterIndex;
   List<DocumentSnapshot> databaseDocuments;
+<<<<<<< HEAD
   List<DocumentSnapshot> usersDocuments;
+=======
+>>>>>>> hanzhe
 
   SharedPreferences prefs;
   String id;
@@ -121,6 +127,7 @@ class ShowInfoState extends State<ShowInfo> {
   }
 
   readData() async {
+<<<<<<< HEAD
     final QuerySnapshot result = await Firestore.instance
         .collection('users')
         .where('id', isEqualTo: id)
@@ -132,6 +139,13 @@ class ShowInfoState extends State<ShowInfo> {
     final QuerySnapshot result =
         await Firestore.instance.collection('users').getDocuments();
     usersDocuments = result.documents;
+=======
+      final QuerySnapshot result = await Firestore.instance
+      .collection('users')
+      .where('id', isEqualTo: id)
+      .getDocuments();
+      databaseDocuments = result.documents;
+>>>>>>> hanzhe
   }
 
   Future<bool> confirmDialog(BuildContext context) {
@@ -179,6 +193,7 @@ class ShowInfoState extends State<ShowInfo> {
         });
   }
 
+<<<<<<< HEAD
   List<DocumentSnapshot> filterDocuments;
   readData2() async {
     final QuerySnapshot result = await Firestore.instance
@@ -216,13 +231,19 @@ class ShowInfoState extends State<ShowInfo> {
   }
 
 //new new
+=======
+>>>>>>> hanzhe
   @override
   Widget build(BuildContext context) {
     readData();
     readLocal();
     return Container(
       child: new StreamBuilder(
+<<<<<<< HEAD
           stream: dataStream(),
+=======
+          stream: Firestore.instance.collection('users').snapshots(),
+>>>>>>> hanzhe
           builder: (context, snapshot) {
             if (!snapshot.hasData) return const Text('Loading...');
             return snapshot.data != null
@@ -230,6 +251,7 @@ class ShowInfoState extends State<ShowInfo> {
                     itemCount: snapshot.data.documents.length,
                     padding: const EdgeInsets.only(top: 10.0),
                     itemBuilder: (BuildContext context, int i) {
+<<<<<<< HEAD
                       // if (snapshot.data.documents[i]['id'] != id)
                       // if (databaseDocuments[0]['filter'] == 'yes') {
                       //   if (snapshot.data.documents[i]['interest'] == interest) {
@@ -238,6 +260,8 @@ class ShowInfoState extends State<ShowInfo> {
                       // } else
                       // return _buildListItem(
                       //     context, snapshot.data.documents[i], i);
+=======
+>>>>>>> hanzhe
                       return Card(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20.0)),
@@ -342,6 +366,7 @@ class ShowInfoState extends State<ShowInfo> {
                                           ),
                                         ),
                                         Text(
+<<<<<<< HEAD
                                           "Interest: " +
                                               snapshot.data.documents[i]
                                                   ['interest'],
@@ -351,6 +376,8 @@ class ShowInfoState extends State<ShowInfo> {
                                           ),
                                         ),
                                         Text(
+=======
+>>>>>>> hanzhe
                                           "Type Of Traveller: " +
                                               snapshot.data.documents[i]
                                                   ['Type'],
@@ -413,6 +440,7 @@ class ShowInfoState extends State<ShowInfo> {
                                                 Map<String, String>
                                                     profilesData2 =
                                                     <String, String>{
+<<<<<<< HEAD
                                                   "displayName":
                                                       databaseDocuments[0]
                                                           ['Name'],
@@ -420,6 +448,11 @@ class ShowInfoState extends State<ShowInfo> {
                                                   "photoURL":
                                                       databaseDocuments[0]
                                                           ['imageURL'],
+=======
+                                                  "displayName": databaseDocuments[0]['Name'],
+                                                  "id": chatId,
+                                                  "photoURL": databaseDocuments[0]['imageURL'],
+>>>>>>> hanzhe
                                                   "aboutMe":
                                                       "I am a fellow passenger!",
                                                   "type": "personal"
@@ -429,9 +462,13 @@ class ShowInfoState extends State<ShowInfo> {
                                                         merge: true)
                                                     .whenComplete(() {
                                                   print("other chat created");
+<<<<<<< HEAD
                                                 }).catchError((e) => print(
                                                         "Errorrrrrrrrrrrr" +
                                                             e));
+=======
+                                                }).catchError((e) => print("Errorrrrrrrrrrrr" + e));
+>>>>>>> hanzhe
                                               },
                                               child: Text("CHAT",
                                                   style: TextStyle(
@@ -461,6 +498,7 @@ class ShowInfoState extends State<ShowInfo> {
           }),
     );
   }
+<<<<<<< HEAD
 
   Widget _buildListItem(
       BuildContext context, DocumentSnapshot document, int i) {
@@ -639,4 +677,6 @@ class ShowInfoState extends State<ShowInfo> {
       ),
     );
   }
+=======
+>>>>>>> hanzhe
 }

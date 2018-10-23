@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # AirVenue
 Mobile application to act as a platform for passengers to connect with each other before, during and after their flight.
 ## Description
@@ -34,3 +35,13 @@ AirVenue is an application for the SIA AppChallenge 2018 solving the problem sta
 For android users, download the AirVenue.apk onto your android device and you will be able to use the application.
 ## Usage
 Proceed to https://www.youtube.com/watch?v=KHULn2Gp34g to view the user journey of the application.
+=======
+# airvenue
+
+A new Flutter project.
+
+## Getting Started
+
+For help getting started with Flutter, view our online
+[documentation](https://flutter.io/).
+>>>>>>> hanzhe

@@ -14,6 +14,10 @@ dependencies:
   intl: 0.15.7
   fluttertoast: ^2.0.7
   flutter_launcher_icons: "^0.6.1"
+<<<<<<< HEAD
+=======
+  translator: ^0.1.0+4
+>>>>>>> hanzhe
 
 flutter_icons:
   android: true 

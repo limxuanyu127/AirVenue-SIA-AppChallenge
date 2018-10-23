@@ -11,6 +11,9 @@ import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:krisbook/pages/const.dart';
+import 'package:translator/translator.dart';
+
+
 
 class Chat extends StatelessWidget {
   final String peerId;
@@ -29,15 +32,14 @@ class Chat extends StatelessWidget {
           backgroundColor: new Color(0xFF1D4886),
           elevation:
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 6.0,
-          // actions: <Widget>[
-          //   new IconButton(
-          //     icon: new Icon(Icons.g_translate),
-          //     color: Colors.white,
-          //     tooltip: 'Translation',
-          //     onPressed: () {},
-          //   ),
-          // ]
-          ),
+          actions: <Widget>[
+            new IconButton(
+              icon: new Icon(Icons.g_translate),
+              color: Colors.white,
+              tooltip: 'Translation',
+              onPressed: () {},
+            ),
+          ]),
       body: new ChatScreen(
         peerId: peerId,
       ),
@@ -58,8 +60,7 @@ class ChatScreenState extends State<ChatScreen> {
   ChatScreenState({Key key, @required this.peerId});
 
   String peerId;
-  String id;
-
+  String id; 
   var listMessage;
   String groupChatId;
   SharedPreferences prefs;
@@ -143,35 +144,148 @@ class ChatScreenState extends State<ChatScreen> {
       isLoading = false;
     });
 
-    onSendMessage(imageUrl, 1);
+    onSendMessage(imageUrl, 1, getPeerIdLang(),getLang(),getWantsTranslation());
   }
+  String peerLang;
+  getPeerIdLang(){
 
-  void onSendMessage(String content, int type) {
+    DocumentReference userRef = Firestore.instance.collection('users').document(peerId);
+    userRef.get().then((snapshot)=> peerLang = snapshot['Languages1']).whenComplete((){
+      if (peerLang == 'German'){
+      peerLang = "de";
+      }
+      else if (peerLang == 'English'){
+        peerLang = 'en';
+      }
+      else if (peerLang == 'French'){
+        peerLang = 'fr';
+      }
+      else if (peerLang == 'Italian'){
+        peerLang = 'it';
+      }
+      return peerLang;
+    }).catchError((e) => print(e));
+  }
+  String ownLang;
+  String getLang(){
+    DocumentReference userRef = Firestore.instance.collection('users').document(id);
+    userRef.get().then((snapshot) {ownLang = snapshot['Languages1']; }).whenComplete((){
+      if (ownLang == 'German'){
+      ownLang = "de";
+      }
+      else if (ownLang == 'English'){
+        ownLang = 'en';
+      }
+      else if (peerLang == 'French'){
+        peerLang = 'fr';
+      }
+      else if (peerLang == 'Italian'){
+        peerLang = 'it';
+      }
+      return ownLang;
+    }).catchError((e) => print(e));
+  return ownLang;
+  }
+  String ownTranslation;
+  getOwnTranslation(){
+    
+    DocumentReference userRef = Firestore.instance.collection('users').document(id);
+    userRef.get().then((snapshot)=> ownTranslation = snapshot['wantsTranslation']).whenComplete((){
+      //print(ownTranslation);
+      return ownTranslation;
+      }).catchError((e) => print(e));
+    return ownTranslation;
+  }
+  String peerTranslation;
+  getWantsTranslation(){
+    DocumentReference userRef = Firestore.instance.collection('users').document(peerId);
+    userRef.get().then((snapshot)=> peerTranslation = snapshot['wantsTranslation']).whenComplete((){
+      //print(wantsTranslation);
+      return  peerTranslation;
+      }).catchError((e) => print(e));
+      return  peerTranslation;
+  }
+  bool enCheck; 
+  isFirstLangEnglish(){
+    String lang;
+    DocumentReference userRef = Firestore.instance.collection('users').document(id);
+    userRef.get().then((snapshot)=> lang = snapshot['Languages1']).whenComplete((){
+      if (lang == 'English'){
+        enCheck = true;
+      }
+      else {
+        enCheck = false;
+      }
+      return enCheck;
+    }).catchError((e) => print(e));
+  }
+  GoogleTranslator translator = GoogleTranslator();
+  void onSendMessage(String content, int type, String peerLang, String selfLang, String peerWantsTranslation) {
     // type: 0 = text, 1 = image, 2 = sticker
+    var translated;
+    var english;
     if (content.trim() != '') {
       textEditingController.clear();
+        if (selfLang == 'en') {
+          english = content;
+          translator.translate(english, to: peerLang).then((output) => translated = output).
+            whenComplete(() {
+              print(translated);
+              var documentReference = Firestore.instance
+                .collection('chatMessages')
+                .document(groupChatId)
+                .collection(groupChatId)
+                .document(DateTime.now().millisecondsSinceEpoch.toString());
 
-      var documentReference = Firestore.instance
-          .collection('chatMessages')
-          .document(groupChatId)
-          .collection(groupChatId)
-          .document(DateTime.now().millisecondsSinceEpoch.toString());
+              Firestore.instance.runTransaction((transaction) async {
+                await transaction.set(
+                  documentReference,
+                  {
+                    'idFrom': id,
+                    'idTo': peerId,
+                    'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
+                    'translated_content': translated,
+                    'en_content': english,
+                    'type': type
+                  },
+                );
+              });
+            listScrollController.animateTo(0.0,
+                duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+              }).catchError((e) => print(e));
+      }
+      else {
+        translated = content;
+        translator.translate(content, to: 'en').then((output) => english = output).
+            whenComplete(() {
+              var documentReference = Firestore.instance
+                .collection('chatMessages')
+                .document(groupChatId)
+                .collection(groupChatId)
+                .document(DateTime.now().millisecondsSinceEpoch.toString());
 
-      Firestore.instance.runTransaction((transaction) async {
-        await transaction.set(
-          documentReference,
-          {
-            'idFrom': id,
-            'idTo': peerId,
-            'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
-            'content': content,
-            'type': type
-          },
-        );
-      });
-      listScrollController.animateTo(0.0,
-          duration: Duration(milliseconds: 300), curve: Curves.easeOut);
-      //Adding chatbot conversation here
+              Firestore.instance.runTransaction((transaction) async {
+                await transaction.set(
+                  documentReference,
+                  {
+                    'idFrom': id,
+                    'idTo': peerId,
+                    'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
+                    'translated_content': translated,
+                    'en_content': english,
+                    'type': type
+                  },
+                );
+              });
+            listScrollController.animateTo(0.0,
+                duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+              }).catchError((e) => print(e));
+      }
+      
+     
+          
+     
+        //Adding chatbot conversation here
       if (peerId == 'SIAchatbot') {
         //Send message to watson server
         _sendMessageToWatson(content);
@@ -209,18 +323,26 @@ class ChatScreenState extends State<ChatScreen> {
     } catch (e) {}
   }
 
-  Widget buildItem(int index, DocumentSnapshot document) {
+  Widget buildItem(int index, DocumentSnapshot document, bool enCheck, String ownTranslation) {
     if (document['idFrom'] == id) {
       // Right (my message)
       return Row(
         children: <Widget>[
           document['type'] == 0
               // Text
-              ? Container(
-                  child: Text(
-                    document['content'],
-                    style: TextStyle(color: primaryColor),
-                  ),
+                ? Container(
+                  child: 
+                    enCheck
+                    ? Text(
+                        document['en_content'],
+                        style: TextStyle(color: primaryColor),)
+                    : ownTranslation == "true"
+                      ? Text(
+                        document['translated_content'],
+                        style: TextStyle(color: primaryColor),)
+                      : Text(
+                        document['en_content'],
+                        style: TextStyle(color: primaryColor),),
                   padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                   width: 200.0,
                   decoration: BoxDecoration(
@@ -230,6 +352,7 @@ class ChatScreenState extends State<ChatScreen> {
                       bottom: isLastMessageRight(index) ? 20.0 : 10.0,
                       right: 10.0),
                 )
+              
               : document['type'] == 1
                   // Image
                   ? Container(
@@ -273,7 +396,7 @@ class ChatScreenState extends State<ChatScreen> {
                           right: 10.0),
                     )
                   // Sticker
-                  : Container(
+                  : Container (
                       child: new Image.asset(
                         'assets/${document['content']}.gif',
                         width: 100.0,
@@ -317,19 +440,29 @@ class ChatScreenState extends State<ChatScreen> {
                           Radius.circular(18.0),
                         ),
                       )
-                    : Container(width: 35.0),
-                document['type'] == 0
+                    : Container (width: 35.0),
+                 document['type'] == 0
                     ? Container(
-                        child: Text(
-                          document['content'],
-                          style: TextStyle(color: Colors.white),
-                        ),
+                      child: 
+                        enCheck
+                          ? Text(
+                            document['en_content'],
+                            style: TextStyle(color:Colors.white),)
+                        : ownTranslation == "true"
+                          ? Text(
+                            document['translated_content'],
+                            style: TextStyle(color: Colors.white),)
+                          : Text(
+                            document['en_content'],
+                            style: TextStyle(color: Colors.white),),
                         padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                         width: 200.0,
                         decoration: BoxDecoration(
                             color: primaryColor,
                             borderRadius: BorderRadius.circular(8.0)),
-                        margin: EdgeInsets.only(left: 10.0),
+                        margin: EdgeInsets.only(
+                            bottom: isLastMessageRight(index) ? 20.0 : 10.0,
+                            right: 10.0),
                       )
                     : document['type'] == 1
                         ? Container(
@@ -475,7 +608,7 @@ class ChatScreenState extends State<ChatScreen> {
           Row(
             children: <Widget>[
               FlatButton(
-                onPressed: () => onSendMessage('mimi1', 2),
+                onPressed: () => onSendMessage('mimi1', 2, getPeerIdLang(),getLang(),getWantsTranslation()),
                 child: new Image.asset(
                   'assets/mimi1.gif',
                   width: 50.0,
@@ -484,7 +617,7 @@ class ChatScreenState extends State<ChatScreen> {
                 ),
               ),
               FlatButton(
-                onPressed: () => onSendMessage('mimi2', 2),
+                onPressed: () => onSendMessage('mimi2', 2,getPeerIdLang(),getLang(),getWantsTranslation()),
                 child: new Image.asset(
                   'assets/mimi2.gif',
                   width: 50.0,
@@ -493,7 +626,7 @@ class ChatScreenState extends State<ChatScreen> {
                 ),
               ),
               FlatButton(
-                onPressed: () => onSendMessage('mimi3', 2),
+                onPressed: () => onSendMessage('mimi3', 2,getPeerIdLang(),getLang(),getWantsTranslation()),
                 child: new Image.asset(
                   'assets/mimi3.gif',
                   width: 50.0,
@@ -507,7 +640,7 @@ class ChatScreenState extends State<ChatScreen> {
           Row(
             children: <Widget>[
               FlatButton(
-                onPressed: () => onSendMessage('mimi4', 2),
+                onPressed: () => onSendMessage('mimi4', 2,getPeerIdLang(),getLang(),getWantsTranslation()),
                 child: new Image.asset(
                   'assets/mimi4.gif',
                   width: 50.0,
@@ -516,7 +649,7 @@ class ChatScreenState extends State<ChatScreen> {
                 ),
               ),
               FlatButton(
-                onPressed: () => onSendMessage('mimi5', 2),
+                onPressed: () => onSendMessage('mimi5', 2,getPeerIdLang(),getLang(),getWantsTranslation()),
                 child: new Image.asset(
                   'assets/mimi5.gif',
                   width: 50.0,
@@ -525,7 +658,7 @@ class ChatScreenState extends State<ChatScreen> {
                 ),
               ),
               FlatButton(
-                onPressed: () => onSendMessage('mimi6', 2),
+                onPressed: () => onSendMessage('mimi6', 2,getPeerIdLang(),getLang(),getWantsTranslation()),
                 child: new Image.asset(
                   'assets/mimi6.gif',
                   width: 50.0,
@@ -539,7 +672,7 @@ class ChatScreenState extends State<ChatScreen> {
           Row(
             children: <Widget>[
               FlatButton(
-                onPressed: () => onSendMessage('mimi7', 2),
+                onPressed: () => onSendMessage('mimi7', 2,getPeerIdLang(),getLang(),getWantsTranslation()),
                 child: new Image.asset(
                   'assets/mimi7.gif',
                   width: 50.0,
@@ -548,7 +681,7 @@ class ChatScreenState extends State<ChatScreen> {
                 ),
               ),
               FlatButton(
-                onPressed: () => onSendMessage('mimi8', 2),
+                onPressed: () => onSendMessage('mimi8', 2,getPeerIdLang(),getLang(),getWantsTranslation()),
                 child: new Image.asset(
                   'assets/mimi8.gif',
                   width: 50.0,
@@ -557,7 +690,7 @@ class ChatScreenState extends State<ChatScreen> {
                 ),
               ),
               FlatButton(
-                onPressed: () => onSendMessage('mimi9', 2),
+                onPressed: () => onSendMessage('mimi9', 2,getPeerIdLang(),getLang(),getWantsTranslation()),
                 child: new Image.asset(
                   'assets/mimi9.gif',
                   width: 50.0,
@@ -616,7 +749,7 @@ class ChatScreenState extends State<ChatScreen> {
                 style: TextStyle(color: primaryColor, fontSize: 15.0),
                 controller: textEditingController,
                 decoration: InputDecoration.collapsed(
-                  hintText: 'Type your message...',
+                  hintText:  'Type your message...',
                   hintStyle: TextStyle(color: greyColor),
                 ),
                 focusNode: focusNode,
@@ -624,20 +757,27 @@ class ChatScreenState extends State<ChatScreen> {
             ),
           ),
 
-          // Material(
-          //   child: new Container(
-          //     child: new IconButton(
-          //         icon: new Icon(Icons.keyboard_voice), onPressed: () {}),
-          //   ),
-          //   color: Colors.white,
-          // ),
+          Material(
+            child: new Container(
+              child: new IconButton(
+                  icon: new Icon(Icons.keyboard_voice), onPressed: () {}),
+            ),
+            color: Colors.white,
+          ),
 
           // Button send message
           Material(
             child: new Container(
               child: new IconButton(
                 icon: new Icon(Icons.send),
-                onPressed: () => onSendMessage(textEditingController.text, 0),
+                onPressed: () { 
+                  getLang();
+                 // print(ownLang);
+                  getPeerIdLang();
+                 // print(peerLang);
+                  getWantsTranslation();
+                 // print(peerTranslation);
+                  onSendMessage(textEditingController.text, 0, peerLang , ownLang, peerTranslation);},
               ),
             ),
             color: Colors.white,
@@ -668,6 +808,8 @@ class ChatScreenState extends State<ChatScreen> {
                   .limit(20)
                   .snapshots(),
               builder: (context, snapshot) {
+                isFirstLangEnglish();
+                getOwnTranslation();
                 if (!snapshot.hasData) {
                   return Center(
                       child: CircularProgressIndicator(
@@ -677,8 +819,8 @@ class ChatScreenState extends State<ChatScreen> {
                   listMessage = snapshot.data.documents;
                   return ListView.builder(
                     padding: EdgeInsets.all(10.0),
-                    itemBuilder: (context, index) =>
-                        buildItem(index, snapshot.data.documents[index]),
+                    itemBuilder:  (context, index) =>
+                        buildItem(index, snapshot.data.documents[index],enCheck,ownTranslation),
                     itemCount: snapshot.data.documents.length,
                     reverse: true,
                     controller: listScrollController,

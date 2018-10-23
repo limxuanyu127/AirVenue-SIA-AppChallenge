@@ -1,9 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+<<<<<<< HEAD
 import 'package:shared_preferences/shared_preferences.dart';
 import './chat.dart';
 import './chat_forum.dart';
+=======
+import './chat.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+>>>>>>> hanzhe
 
 final ThemeData iOSTheme = new ThemeData(
   primarySwatch: Colors.blue,
@@ -30,19 +35,29 @@ class MessengerHomeState extends State<MessengerHome> {
   readLocal() async {
     prefs = await SharedPreferences.getInstance();
     id = prefs.getString("id").toString() ?? '';
+<<<<<<< HEAD
     setState(() {});
   }
 
+=======
+    setState(() {
+   });
+   }
+>>>>>>> hanzhe
   @override
   Widget build(BuildContext context) {
     readLocal();
     return new Container(
         child: new StreamBuilder(
+<<<<<<< HEAD
             stream: Firestore.instance
                 .collection('users')
                 .document(id)
                 .collection('chatUsers')
                 .snapshots(),
+=======
+            stream: Firestore.instance.collection('users').document(id).collection('chatUsers').snapshots(),
+>>>>>>> hanzhe
             builder: (context, snapshot) {
               if (!snapshot.hasData) return const Text('Loading...');
               return snapshot.data != null
@@ -59,6 +74,7 @@ class MessengerHomeState extends State<MessengerHome> {
 }
 
 Widget _buildChats(BuildContext context, DocumentSnapshot document) {
+<<<<<<< HEAD
   SharedPreferences prefs;
   storeLocal(forumName) async {
     prefs = await SharedPreferences.getInstance();
@@ -102,4 +118,34 @@ Widget _buildChats(BuildContext context, DocumentSnapshot document) {
           );
         }
       });
+=======
+  return new ListTile(
+    leading: new CircleAvatar(
+      foregroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Colors.blue[100],
+      backgroundImage: new NetworkImage(document['photoURL']),
+    ),
+    title: new Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        new Text(
+          document['displayName'],
+          style: new TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ],
+    ),
+    subtitle: new Container(
+      padding: const EdgeInsets.only(top: 5.0),
+      child: new Text(document['aboutMe'],
+          style: new TextStyle(fontWeight: FontWeight.bold)),
+    ),
+    onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                Chat(peerId: document['id'], peerName: document['displayName']),
+          ),
+        ),
+  );
+>>>>>>> hanzhe
 }
