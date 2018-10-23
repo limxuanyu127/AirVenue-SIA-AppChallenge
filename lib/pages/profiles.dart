@@ -632,7 +632,8 @@ class _ProfilesState extends State<Profiles> {
                                   "imageURL":
                                       "http://www.desiformal.com/assets/images/default-userAvatar.png",
                                   "id": id,
-                                  "interest": _selectedInterests
+                                  "interest": _selectedInterests,
+                                  "filter": 'no'
                                 };
                                 Navigator.of(context).pop(true);
                                 documentReference

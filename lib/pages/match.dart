@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import './preferred_buddy.dart' as preferred_buddy;
 import 'package:shared_preferences/shared_preferences.dart';
-
+// WORK
 class Match extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -178,16 +178,6 @@ class ShowInfoState extends State<ShowInfo> {
         });
   }
 
-  addTimeStamp() {
-    DocumentReference documentReference =
-        Firestore.instance.collection('users').document(id);
-    Map<String, String> timeData = <String, String>{"timestamp": '1'};
-    documentReference.setData(timeData, merge: true).whenComplete(() {
-      print("time added created");
-    }).catchError((e) => print(e));
-
-  }
-
   List<DocumentSnapshot> filterDocuments;
   readData2() async {
     final QuerySnapshot result = await Firestore.instance
@@ -197,7 +187,7 @@ class ShowInfoState extends State<ShowInfo> {
         .getDocuments();
     filterDocuments = result.documents;
   }
-
+//new new
   @override
   Widget build(BuildContext context) {
     readData();
@@ -208,13 +198,11 @@ class ShowInfoState extends State<ShowInfo> {
       interest = filterDocuments[0]['interest'];
       // String photoURL = databaseDocuments[0]['imageURL'];
     }
-    addTimeStamp();
     return Container(
       child: new StreamBuilder(
           stream: Firestore.instance
               .collection('users')
-              .where('timestamp', isLessThan: '1')
-              .where('interest', isEqualTo: 'Technology')
+              .where('interest', isEqualTo: 'Food')
               .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) return const Text('Loading...');
@@ -229,220 +217,220 @@ class ShowInfoState extends State<ShowInfo> {
                       //       return _buildListItem(context, snapshot.data.documents[i], i);
                       //   }
                       // } else
-                      return _buildListItem(
-                          context, snapshot.data.documents[i], i);
-                      // return Card(
-                      //   shape: RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.circular(20.0)),
-                      //   elevation: 3.0,
-                      //   margin:
-                      //       const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 0.0),
-                      //   child: new ExpansionPanelList(
-                      //     expansionCallback: (int index, bool status) {
-                      //       setState(() {
-                      //         _activeMeterIndex =
-                      //             _activeMeterIndex == i ? null : i;
-                      //       });
-                      //     },
-                      //     children: [
-                      //       new ExpansionPanel(
-                      //         isExpanded: _activeMeterIndex == i,
-                      //         headerBuilder: (BuildContext context,
-                      //                 bool isExpanded) =>
-                      //             new Container(
-                      //                 padding: EdgeInsets.fromLTRB(
-                      //                     5.0, 5.0, 0.0, 5.0),
-                      //                 child: ListTile(
-                      //                   leading: CircleAvatar(
-                      //                     backgroundImage: new NetworkImage(
-                      //                         snapshot.data.documents[i]
-                      //                             ['imageURL']),
-                      //                     radius: 32.0,
-                      //                   ),
-                      //                   title: Container(
-                      //                     padding: EdgeInsets.only(bottom: 6.0),
-                      //                     child: Text(
-                      //                         snapshot.data.documents[i]
-                      //                             ['Name'],
-                      //                         style: TextStyle(
-                      //                           fontWeight: FontWeight.bold,
-                      //                           color: Color(0xFF1D4886),
-                      //                           fontSize: 15.0,
-                      //                         ),
-                      //                         overflow: TextOverflow.clip),
-                      //                   ),
-                      //                   subtitle: Text("Gender: " +
-                      //                       snapshot.data.documents[i]
-                      //                           ['Gender'] +
-                      //                       " \nAge: " +
-                      //                       snapshot.data.documents[i]['Age']),
-                      //                 )),
-                      //         body: new Card(
-                      //             elevation: 4.0,
-                      //             color: Colors.white,
-                      //             shape: RoundedRectangleBorder(
-                      //                 borderRadius:
-                      //                     BorderRadius.circular(10.0)),
-                      //             margin: EdgeInsets.fromLTRB(
-                      //                 20.0, 0.0, 20.0, 20.0),
-                      //             child: Container(
-                      //               padding: EdgeInsets.all(10.0),
-                      //               child: new Column(
-                      //                 mainAxisAlignment:
-                      //                     MainAxisAlignment.spaceBetween,
-                      //                 crossAxisAlignment:
-                      //                     CrossAxisAlignment.stretch,
-                      //                 children: <Widget>[
-                      //                   Container(
-                      //                     padding: EdgeInsets.only(bottom: 5.0),
-                      //                     child: Text(
-                      //                       "Profile",
-                      //                       style: TextStyle(
-                      //                         color: Color(0xFF1D4886),
-                      //                         fontSize: 15.0,
-                      //                         fontWeight: FontWeight.bold,
-                      //                       ),
-                      //                     ),
-                      //                   ),
-                      //                   Text(
-                      //                     "Description: " +
-                      //                         snapshot.data.documents[i]
-                      //                             ['Description'],
-                      //                     style: TextStyle(
-                      //                       color: Colors.black,
-                      //                       fontSize: 13.0,
-                      //                     ),
-                      //                   ),
-                      //                   Text(
-                      //                     "Languages: " +
-                      //                         snapshot.data.documents[i]
-                      //                             ['Languages1'] +
-                      //                         " & " +
-                      //                         snapshot.data.documents[i]
-                      //                             ['Languages2'],
-                      //                     style: TextStyle(
-                      //                       color: Colors.black,
-                      //                       fontSize: 13.0,
-                      //                     ),
-                      //                   ),
-                      //                   Text(
-                      //                     "Nationality: " +
-                      //                         snapshot.data.documents[i]
-                      //                             ['Nationality'],
-                      //                     style: TextStyle(
-                      //                       color: Colors.black,
-                      //                       fontSize: 13.0,
-                      //                     ),
-                      //                   ),
-                      //                   Text(
-                      //                     "Interest: " +
-                      //                         snapshot.data.documents[i]
-                      //                             ['interest'],
-                      //                     style: TextStyle(
-                      //                       color: Colors.black,
-                      //                       fontSize: 13.0,
-                      //                     ),
-                      //                   ),
-                      //                   Text(
-                      //                     "Type Of Traveller: " +
-                      //                         snapshot.data.documents[i]
-                      //                             ['Type'],
-                      //                     style: TextStyle(
-                      //                       color: Colors.black,
-                      //                       fontSize: 13.0,
-                      //                     ),
-                      //                   ),
-                      //                   Text(
-                      //                     "Next Destination: " +
-                      //                         snapshot.data.documents[i]
-                      //                             ['Destination'],
-                      //                     style: TextStyle(
-                      //                       color: Colors.black,
-                      //                       fontSize: 13.0,
-                      //                     ),
-                      //                   ),
-                      //                   Row(
-                      //                     mainAxisAlignment:
-                      //                         MainAxisAlignment.end,
-                      //                     children: <Widget>[
-                      //                       FlatButton(
-                      //                         onPressed: () {
-                      //                           _confirm();
-                      //                           String chatId = snapshot
-                      //                               .data.documents[i]['id'];
-                      //                           DocumentReference
-                      //                               documentReference =
-                      //                               Firestore.instance
-                      //                                   .collection('users')
-                      //                                   .document(id)
-                      //                                   .collection('chatUsers')
-                      //                                   .document(chatId);
-                      //                           Map<String, String>
-                      //                               profilesData =
-                      //                               <String, String>{
-                      //                             "displayName": snapshot.data
-                      //                                 .documents[i]['Name'],
-                      //                             "id": snapshot
-                      //                                 .data.documents[i]['id'],
-                      //                             "photoURL": snapshot.data
-                      //                                 .documents[i]['imageURL'],
-                      //                             "aboutMe":
-                      //                                 "I am a fellow passenger!",
-                      //                             "type": "personal"
-                      //                           };
-                      //                           documentReference
-                      //                               .setData(profilesData,
-                      //                                   merge: true)
-                      //                               .whenComplete(() {
-                      //                             print("chat created");
-                      //                           }).catchError((e) => print(e));
-                      //                           DocumentReference
-                      //                               documentReference2 =
-                      //                               Firestore.instance
-                      //                                   .collection('users')
-                      //                                   .document(chatId)
-                      //                                   .collection('chatUsers')
-                      //                                   .document(id);
-                      //                           Map<String, String>
-                      //                               profilesData2 =
-                      //                               <String, String>{
-                      //                             "displayName": databaseDocuments[0]['Name'],
-                      //                             "id": chatId,
-                      //                             "photoURL": databaseDocuments[0]['imageURL'],
-                      //                             "aboutMe":
-                      //                                 "I am a fellow passenger!",
-                      //                             "type": "personal"
-                      //                           };
-                      //                           documentReference2
-                      //                               .setData(profilesData2,
-                      //                                   merge: true)
-                      //                               .whenComplete(() {
-                      //                             print("other chat created");
-                      //                           }).catchError((e) => print("Errorrrrrrrrrrrr" + e));
-                      //                         },
-                      //                         child: Text("CHAT",
-                      //                             style: TextStyle(
-                      //                               color: Color(0xFF1D4886),
-                      //                             )),
-                      //                       ),
-                      //                       FlatButton(
-                      //                         onPressed: () {
-                      //                           _confirm2();
-                      //                         },
-                      //                         child: Text("MATCH",
-                      //                             style: TextStyle(
-                      //                               color: Color(0xFF1D4886),
-                      //                             )),
-                      //                       )
-                      //                     ],
-                      //                   )
-                      //                 ],
-                      //               ),
-                      //             )),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // );
+                      // return _buildListItem(
+                      //     context, snapshot.data.documents[i], i);
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0)),
+                        elevation: 3.0,
+                        margin:
+                            const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 0.0),
+                        child: new ExpansionPanelList(
+                          expansionCallback: (int index, bool status) {
+                            setState(() {
+                              _activeMeterIndex =
+                                  _activeMeterIndex == i ? null : i;
+                            });
+                          },
+                          children: [
+                            new ExpansionPanel(
+                              isExpanded: _activeMeterIndex == i,
+                              headerBuilder: (BuildContext context,
+                                      bool isExpanded) =>
+                                  new Container(
+                                      padding: EdgeInsets.fromLTRB(
+                                          5.0, 5.0, 0.0, 5.0),
+                                      child: ListTile(
+                                        leading: CircleAvatar(
+                                          backgroundImage: new NetworkImage(
+                                              snapshot.data.documents[i]
+                                                  ['imageURL']),
+                                          radius: 32.0,
+                                        ),
+                                        title: Container(
+                                          padding: EdgeInsets.only(bottom: 6.0),
+                                          child: Text(
+                                              snapshot.data.documents[i]
+                                                  ['Name'],
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xFF1D4886),
+                                                fontSize: 15.0,
+                                              ),
+                                              overflow: TextOverflow.clip),
+                                        ),
+                                        subtitle: Text("Gender: " +
+                                            snapshot.data.documents[i]
+                                                ['Gender'] +
+                                            " \nAge: " +
+                                            snapshot.data.documents[i]['Age']),
+                                      )),
+                              body: new Card(
+                                  elevation: 4.0,
+                                  color: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(10.0)),
+                                  margin: EdgeInsets.fromLTRB(
+                                      20.0, 0.0, 20.0, 20.0),
+                                  child: Container(
+                                    padding: EdgeInsets.all(10.0),
+                                    child: new Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: <Widget>[
+                                        Container(
+                                          padding: EdgeInsets.only(bottom: 5.0),
+                                          child: Text(
+                                            "Profile",
+                                            style: TextStyle(
+                                              color: Color(0xFF1D4886),
+                                              fontSize: 15.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          "Description: " +
+                                              snapshot.data.documents[i]
+                                                  ['Description'],
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 13.0,
+                                          ),
+                                        ),
+                                        Text(
+                                          "Languages: " +
+                                              snapshot.data.documents[i]
+                                                  ['Languages1'] +
+                                              " & " +
+                                              snapshot.data.documents[i]
+                                                  ['Languages2'],
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 13.0,
+                                          ),
+                                        ),
+                                        Text(
+                                          "Nationality: " +
+                                              snapshot.data.documents[i]
+                                                  ['Nationality'],
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 13.0,
+                                          ),
+                                        ),
+                                        Text(
+                                          "Interest: " +
+                                              snapshot.data.documents[i]
+                                                  ['interest'],
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 13.0,
+                                          ),
+                                        ),
+                                        Text(
+                                          "Type Of Traveller: " +
+                                              snapshot.data.documents[i]
+                                                  ['Type'],
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 13.0,
+                                          ),
+                                        ),
+                                        Text(
+                                          "Next Destination: " +
+                                              snapshot.data.documents[i]
+                                                  ['Destination'],
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 13.0,
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: <Widget>[
+                                            FlatButton(
+                                              onPressed: () {
+                                                _confirm();
+                                                String chatId = snapshot
+                                                    .data.documents[i]['id'];
+                                                DocumentReference
+                                                    documentReference =
+                                                    Firestore.instance
+                                                        .collection('users')
+                                                        .document(id)
+                                                        .collection('chatUsers')
+                                                        .document(chatId);
+                                                Map<String, String>
+                                                    profilesData =
+                                                    <String, String>{
+                                                  "displayName": snapshot.data
+                                                      .documents[i]['Name'],
+                                                  "id": snapshot
+                                                      .data.documents[i]['id'],
+                                                  "photoURL": snapshot.data
+                                                      .documents[i]['imageURL'],
+                                                  "aboutMe":
+                                                      "I am a fellow passenger!",
+                                                  "type": "personal"
+                                                };
+                                                documentReference
+                                                    .setData(profilesData,
+                                                        merge: true)
+                                                    .whenComplete(() {
+                                                  print("chat created");
+                                                }).catchError((e) => print(e));
+                                                DocumentReference
+                                                    documentReference2 =
+                                                    Firestore.instance
+                                                        .collection('users')
+                                                        .document(chatId)
+                                                        .collection('chatUsers')
+                                                        .document(id);
+                                                Map<String, String>
+                                                    profilesData2 =
+                                                    <String, String>{
+                                                  "displayName": databaseDocuments[0]['Name'],
+                                                  "id": chatId,
+                                                  "photoURL": databaseDocuments[0]['imageURL'],
+                                                  "aboutMe":
+                                                      "I am a fellow passenger!",
+                                                  "type": "personal"
+                                                };
+                                                documentReference2
+                                                    .setData(profilesData2,
+                                                        merge: true)
+                                                    .whenComplete(() {
+                                                  print("other chat created");
+                                                }).catchError((e) => print("Errorrrrrrrrrrrr" + e));
+                                              },
+                                              child: Text("CHAT",
+                                                  style: TextStyle(
+                                                    color: Color(0xFF1D4886),
+                                                  )),
+                                            ),
+                                            FlatButton(
+                                              onPressed: () {
+                                                _confirm2();
+                                              },
+                                              child: Text("MATCH",
+                                                  style: TextStyle(
+                                                    color: Color(0xFF1D4886),
+                                                  )),
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  )),
+                            ),
+                          ],
+                        ),
+                      );
                     })
                 : new Container();
           }),
