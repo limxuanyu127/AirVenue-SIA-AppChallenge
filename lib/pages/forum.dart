@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
-<<<<<<< HEAD
 import 'package:shared_preferences/shared_preferences.dart';
-=======
->>>>>>> hanzhe
 
 class Forum extends StatefulWidget {
   @override
@@ -224,11 +221,7 @@ Future _createForum(BuildContext context) async {
                                           "name": forumName,
                                           "description": forumDesc,
                                           "imageURL":
-<<<<<<< HEAD
                                               "https://d30zbujsp7ao6j.cloudfront.net/wp-content/uploads/2017/07/unnamed.png",
-=======
-                                              "https://cdn-images-1.medium.com/max/1200/1*5-aoK8IBmXve5whBQM90GA.png",
->>>>>>> hanzhe
                                           "count": "1",
                                         };
                                         documentReference
@@ -272,7 +265,6 @@ class BuildForumsState extends State<BuildForums> {
   BuildForumsState(this.context);
   int _activeMeterIndex;
 
-<<<<<<< HEAD
   SharedPreferences prefs;
   String id;
   readLocal() async {
@@ -281,8 +273,6 @@ class BuildForumsState extends State<BuildForums> {
     setState(() {});
   }
 
-=======
->>>>>>> hanzhe
   void _confirm() {
     confirmDialog(context).then((bool value) {});
   }
@@ -309,16 +299,13 @@ class BuildForumsState extends State<BuildForums> {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     readLocal();
     return Container(
       child: new StreamBuilder(
           stream: Firestore.instance.collection('forums').orderBy('count', descending: true).snapshots(),
-=======
     return Container(
       child: new StreamBuilder(
           stream: Firestore.instance.collection('forums').snapshots(),
->>>>>>> hanzhe
           builder: (context, snapshot) {
             if (!snapshot.hasData) return const Text('Loading...');
             return snapshot.data != null
@@ -412,7 +399,6 @@ class BuildForumsState extends State<BuildForums> {
                                             FlatButton(
                                               onPressed: () {
                                                 _confirm();
-<<<<<<< HEAD
                                                 String forumId = snapshot
                                                     .data.documents[i]['name'];
                                                 DocumentReference
@@ -440,8 +426,6 @@ class BuildForumsState extends State<BuildForums> {
                                                     .whenComplete(() {
                                                   print("forum created");
                                                 }).catchError((e) => print(e));
-=======
->>>>>>> hanzhe
                                               },
                                               child: Text("JOIN FORUM",
                                                   style: TextStyle(
@@ -460,6 +444,6 @@ class BuildForumsState extends State<BuildForums> {
                     })
                 : new Container();
           }),
-    );
-  }
+    )
+      ));}
 }

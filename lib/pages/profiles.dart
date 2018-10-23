@@ -68,7 +68,11 @@ class _ProfilesState extends State<Profiles> {
   @override
   void initState() {
     _nationalities.addAll(["Singaporean", "Chinese", "Japanese", "European", "American"]);
+<<<<<<< HEAD
     _languages.addAll(["English", "German", "Italian", "French", "Japanses", "Others"]);
+=======
+    _languages.addAll(["English", "German", "Italian", "French", "Japanese", "Others"]);
+>>>>>>> c99385fcf0d706a34bd94e457e9329a9c90a6336
   }
 
   void _onChangedNat(String value) {
