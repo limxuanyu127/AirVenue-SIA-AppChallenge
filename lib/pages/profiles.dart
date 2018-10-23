@@ -40,6 +40,7 @@ class _ProfilesState extends State<Profiles> {
   String _selectedGender;
   String _selectedTraveller;
   String _selectedMatch;
+  String _selectedTranslation;
 
   String _descrip;
   String _destination;
@@ -67,7 +68,7 @@ class _ProfilesState extends State<Profiles> {
   @override
   void initState() {
     _nationalities.addAll(["Singaporean", "Chinese", "Japanese", "European", "American"]);
-    _languages.addAll(["English", "Chinese", "Malay", "Japanese", "German","Others"]);
+    _languages.addAll(["English", "German", "Italian", "French", "Japanese", "Others"]);
   }
 
   void _onChangedNat(String value) {
@@ -86,6 +87,12 @@ class _ProfilesState extends State<Profiles> {
   void _onChangedSeat(String value) {
     setState(() {
       _selectedSeat = value;
+    });
+  }
+
+   void _onChangedTranslation(String value) {
+    setState(() {
+      _selectedTranslation = value;
     });
   }
 
@@ -351,9 +358,38 @@ class _ProfilesState extends State<Profiles> {
                                 }).toList(),
                                 onChanged: (String value) {
                                   _onChangedLang2(value);
-                                })
+                                }),
                           ],
                         ),
+                      ),
+                      new InputDecorator(
+                        decoration: new InputDecoration(
+                          border: InputBorder.none,
+                          icon: Icon(Icons.g_translate),
+                          labelStyle: TextStyle(fontSize: 20.0),
+                          labelText: ('Translation to your first language?'),
+                        ),
+                      ),
+                      new Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          new Text('Yes'),
+                          new Radio(
+                            value: 'true',
+                            groupValue: _selectedTranslation,
+                            onChanged: (String value) {
+                              _onChangedTranslation(value);
+                            },
+                          ),
+                          new Text('No'),
+                          new Radio(
+                            value: 'false',
+                            groupValue: _selectedTranslation,
+                            onChanged: (String value) {
+                              _onChangedTranslation(value);
+                            },
+                          ),
+                        ],
                       ),
                     ])),
               ),
@@ -616,8 +652,8 @@ class _ProfilesState extends State<Profiles> {
                                     .instance
                                     .collection('users')
                                     .document(id);
-                                Map<String, String> profilesData =
-                                    <String, String>{
+                                Map<String, dynamic> profilesData =
+                                    <String, dynamic>{
                                   "Name": _nickname,
                                   "Gender": _selectedGender,
                                   "Age": stringAge,
@@ -633,7 +669,8 @@ class _ProfilesState extends State<Profiles> {
                                       "http://www.desiformal.com/assets/images/default-userAvatar.png",
                                   "id": id,
                                   "interest": _selectedInterests,
-                                  "filter": 'no'
+                                  "filter": 'no',
+                                  "wantsTranslation": _selectedTranslation
                                 };
                                 Navigator.of(context).pop(true);
                                 documentReference

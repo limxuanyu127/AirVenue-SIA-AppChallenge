@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import './preferred_buddy.dart' as preferred_buddy;
 import 'package:shared_preferences/shared_preferences.dart';
+
 // WORK
 class Match extends StatefulWidget {
   @override
@@ -187,23 +188,41 @@ class ShowInfoState extends State<ShowInfo> {
         .getDocuments();
     filterDocuments = result.documents;
   }
+
+  List<DocumentSnapshot> userDocuments;
+  readUser() async {
+    final QuerySnapshot result =
+        await Firestore.instance.collection('users').getDocuments();
+    userDocuments = result.documents;
+  }
+
+  Stream dataStream() {
+    Stream stream;
+    String interest;
+    if (databaseDocuments[0]['filter'] == 'yes') {
+        interest = filterDocuments[0]['interest'];
+        stream = Firestore.instance
+        .collection('users')
+        .where('interest', isEqualTo: interest)
+        .where('Match', isEqualTo: 'Yes')
+        .snapshots();
+    } else{
+    stream = Firestore.instance
+        .collection('users')
+        .where('Match', isEqualTo: 'Yes')
+        .snapshots();
+    }
+    return stream;
+  }
+
 //new new
   @override
   Widget build(BuildContext context) {
     readData();
     readLocal();
-    String interest;
-    if (databaseDocuments[0]['filter'] == 'yes') {
-      readData2();
-      interest = filterDocuments[0]['interest'];
-      // String photoURL = databaseDocuments[0]['imageURL'];
-    }
     return Container(
       child: new StreamBuilder(
-          stream: Firestore.instance
-              .collection('users')
-              .where('interest', isEqualTo: 'Food')
-              .snapshots(),
+          stream: dataStream(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) return const Text('Loading...');
             return snapshot.data != null
@@ -394,9 +413,13 @@ class ShowInfoState extends State<ShowInfo> {
                                                 Map<String, String>
                                                     profilesData2 =
                                                     <String, String>{
-                                                  "displayName": databaseDocuments[0]['Name'],
+                                                  "displayName":
+                                                      databaseDocuments[0]
+                                                          ['Name'],
                                                   "id": chatId,
-                                                  "photoURL": databaseDocuments[0]['imageURL'],
+                                                  "photoURL":
+                                                      databaseDocuments[0]
+                                                          ['imageURL'],
                                                   "aboutMe":
                                                       "I am a fellow passenger!",
                                                   "type": "personal"
@@ -406,7 +429,9 @@ class ShowInfoState extends State<ShowInfo> {
                                                         merge: true)
                                                     .whenComplete(() {
                                                   print("other chat created");
-                                                }).catchError((e) => print("Errorrrrrrrrrrrr" + e));
+                                                }).catchError((e) => print(
+                                                        "Errorrrrrrrrrrrr" +
+                                                            e));
                                               },
                                               child: Text("CHAT",
                                                   style: TextStyle(
