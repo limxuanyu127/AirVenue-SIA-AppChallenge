@@ -24,14 +24,8 @@ class _ProfilesState extends State<Profiles> {
   readLocal() async {
     prefs = await SharedPreferences.getInstance();
     id = prefs.getString("id").toString() ?? '';
-<<<<<<< HEAD
     setState(() {});
   }
-=======
-    setState(() {
-   });
-   }
->>>>>>> hanzhe
 
   List<String> _nationalities = new List<String>();
   String _nationality;
@@ -46,10 +40,7 @@ class _ProfilesState extends State<Profiles> {
   String _selectedGender;
   String _selectedTraveller;
   String _selectedMatch;
-<<<<<<< HEAD
   String _selectedTranslation;
-=======
->>>>>>> hanzhe
 
   String _descrip;
   String _destination;
@@ -71,27 +62,13 @@ class _ProfilesState extends State<Profiles> {
       _image = image;
     });
   }
-<<<<<<< HEAD
 
   //
   String _selectedInterests;
   @override
   void initState() {
-<<<<<<< HEAD
-    _nationalities.addAll(["Singapore", "China", "Japan", "Europe", "America"]);
-    _languages.addAll(["English", "Chinese", "Malay", "Japanese", "German", "Others"]);
-=======
     _nationalities.addAll(["Singaporean", "Chinese", "Japanese", "European", "American"]);
-    _languages.addAll(["English", "German", "Italian", "French", "Japanese", "Others"]);
->>>>>>> ba5ea2c4deec8ec5f55529a1799a99187627c959
-=======
-  //
-
-  @override
-  void initState() {
-    _nationalities.addAll(["Singapore", "China", "Japan", "Europe", "America"]);
-    _languages.addAll(["English", "Chinese", "Malay", "Japanese", "Others"]);
->>>>>>> hanzhe
+    _languages.addAll(["English", "German", "Italian", "French", "Japanses", "Others"]);
   }
 
   void _onChangedNat(String value) {
@@ -100,7 +77,6 @@ class _ProfilesState extends State<Profiles> {
     });
   }
 
-<<<<<<< HEAD
 //new
   void _onChangedInterests(String value) {
     setState(() {
@@ -108,23 +84,18 @@ class _ProfilesState extends State<Profiles> {
     });
   }
 
-=======
->>>>>>> hanzhe
   void _onChangedSeat(String value) {
     setState(() {
       _selectedSeat = value;
     });
   }
 
-<<<<<<< HEAD
    void _onChangedTranslation(String value) {
     setState(() {
       _selectedTranslation = value;
     });
   }
 
-=======
->>>>>>> hanzhe
   void _onChangedLang1(String value) {
     setState(() {
       _language1 = value;
@@ -387,7 +358,6 @@ class _ProfilesState extends State<Profiles> {
                                 }).toList(),
                                 onChanged: (String value) {
                                   _onChangedLang2(value);
-<<<<<<< HEAD
                                 }),
                           ],
                         ),
@@ -421,12 +391,6 @@ class _ProfilesState extends State<Profiles> {
                           ),
                         ],
                       ),
-=======
-                                })
-                          ],
-                        ),
-                      ),
->>>>>>> hanzhe
                     ])),
               ),
               new Card(
@@ -597,7 +561,6 @@ class _ProfilesState extends State<Profiles> {
                       ],
                     ),
                   ),
-<<<<<<< HEAD
                   //new addition
                   new InputDecorator(
                     decoration: new InputDecoration(
@@ -665,8 +628,6 @@ class _ProfilesState extends State<Profiles> {
                   ),
                   //
 
-=======
->>>>>>> hanzhe
                   new Container(
                     padding: new EdgeInsets.only(
                         top: 20.0, left: 300.0, bottom: 20.0),
@@ -684,24 +645,15 @@ class _ProfilesState extends State<Profiles> {
                                 _selectedSeat != null &&
                                 _descrip != null &&
                                 _destination != null &&
-<<<<<<< HEAD
                                 _selectedMatch != null &&
                                 _selectedInterests != null) {
-=======
-                                _selectedMatch != null) {
->>>>>>> hanzhe
                               if (_formKey.currentState.validate()) {
                                 DocumentReference documentReference = Firestore
                                     .instance
                                     .collection('users')
                                     .document(id);
-<<<<<<< HEAD
                                 Map<String, dynamic> profilesData =
                                     <String, dynamic>{
-=======
-                                Map<String, String> profilesData =
-                                    <String, String>{
->>>>>>> hanzhe
                                   "Name": _nickname,
                                   "Gender": _selectedGender,
                                   "Age": stringAge,
@@ -715,14 +667,10 @@ class _ProfilesState extends State<Profiles> {
                                   "Match": _selectedMatch,
                                   "imageURL":
                                       "http://www.desiformal.com/assets/images/default-userAvatar.png",
-<<<<<<< HEAD
                                   "id": id,
                                   "interest": _selectedInterests,
                                   "filter": 'no',
                                   "wantsTranslation": _selectedTranslation
-=======
-                                  "id": id
->>>>>>> hanzhe
                                 };
                                 Navigator.of(context).pop(true);
                                 documentReference
