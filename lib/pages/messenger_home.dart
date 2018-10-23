@@ -88,6 +88,7 @@ Widget _buildChats(BuildContext context, DocumentSnapshot document) {
       onTap: () {
         if (document['type'] == 'personal') {
           if(document['id'] == 'SIAchatbot'){
+            print('chatbot');
             Navigator.push(
             context,
             MaterialPageRoute(

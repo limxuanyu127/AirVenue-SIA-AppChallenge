@@ -28,15 +28,7 @@ class ChatBot extends StatelessWidget {
           title: new Text(peerName),
           backgroundColor: new Color(0xFF1D4886),
           elevation:
-              Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 6.0,
-          actions: <Widget>[
-            new IconButton(
-              icon: new Icon(Icons.g_translate),
-              color: Colors.white,
-              tooltip: 'Translation',
-              onPressed: () {},
-            ),
-          ]),
+              Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 6.0),
       body: new ChatBotScreen(
         peerId: peerId,
       ),
@@ -307,7 +299,7 @@ class ChatBotScreenState extends State<ChatBotScreen> {
                             padding: EdgeInsets.all(10.0),
                           ),
                           imageUrl:
-                              "https://cdn-images-1.medium.com/max/1200/1*5-aoK8IBmXve5whBQM90GA.png", // TODO: add link to pic here
+                              "http://pluspng.com/img-png/singapore-airlines-logo-png-singapore-airlines-logo-1102.jpg",
                           width: 35.0,
                           height: 35.0,
                           fit: BoxFit.cover,
@@ -622,15 +614,6 @@ class ChatBotScreenState extends State<ChatBotScreen> {
               ),
             ),
           ),
-
-          Material(
-            child: new Container(
-              child: new IconButton(
-                  icon: new Icon(Icons.keyboard_voice), onPressed: () {}),
-            ),
-            color: Colors.white,
-          ),
-
           // Button send message
           Material(
             child: new Container(
