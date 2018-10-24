@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -196,8 +199,9 @@ class ShowInfoState extends State<ShowInfo> {
     userDocuments = result.documents;
   }
 
-  Stream dataStream() {
-    Stream stream;
+  Stream stream;
+
+  dataStream() {
     String interest;
     if (databaseDocuments[0]['filter'] == 'yes') {
         interest = filterDocuments[0]['interest'];
@@ -212,7 +216,6 @@ class ShowInfoState extends State<ShowInfo> {
         .where('Match', isEqualTo: 'Yes')
         .snapshots();
     }
-    return stream;
   }
 
 //new new
@@ -220,14 +223,17 @@ class ShowInfoState extends State<ShowInfo> {
   Widget build(BuildContext context) {
     readData();
     readLocal();
+    readData2();
+    dataStream();
+    
     return Container(
       child: new StreamBuilder(
-          stream: dataStream(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) return const Text('Loading...');
-            return snapshot.data != null
+          stream: stream,
+          builder: (context, stream) {
+            if (!stream.hasData) return const Text('Loading...');
+            return stream.data != null
                 ? new ListView.builder(
-                    itemCount: snapshot.data.documents.length,
+                    itemCount: stream.data.documents.length,
                     padding: const EdgeInsets.only(top: 10.0),
                     itemBuilder: (BuildContext context, int i) {
                       // if (snapshot.data.documents[i]['id'] != id)
@@ -262,14 +268,14 @@ class ShowInfoState extends State<ShowInfo> {
                                       child: ListTile(
                                         leading: CircleAvatar(
                                           backgroundImage: new NetworkImage(
-                                              snapshot.data.documents[i]
+                                              stream.data.documents[i]
                                                   ['imageURL']),
                                           radius: 32.0,
                                         ),
                                         title: Container(
                                           padding: EdgeInsets.only(bottom: 6.0),
                                           child: Text(
-                                              snapshot.data.documents[i]
+                                              stream.data.documents[i]
                                                   ['Name'],
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
@@ -279,10 +285,10 @@ class ShowInfoState extends State<ShowInfo> {
                                               overflow: TextOverflow.clip),
                                         ),
                                         subtitle: Text("Gender: " +
-                                            snapshot.data.documents[i]
+                                            stream.data.documents[i]
                                                 ['Gender'] +
                                             " \nAge: " +
-                                            snapshot.data.documents[i]['Age']),
+                                            stream.data.documents[i]['Age']),
                                       )),
                               body: new Card(
                                   elevation: 4.0,
@@ -313,7 +319,7 @@ class ShowInfoState extends State<ShowInfo> {
                                         ),
                                         Text(
                                           "Description: " +
-                                              snapshot.data.documents[i]
+                                              stream.data.documents[i]
                                                   ['Description'],
                                           style: TextStyle(
                                             color: Colors.black,
@@ -322,10 +328,10 @@ class ShowInfoState extends State<ShowInfo> {
                                         ),
                                         Text(
                                           "Languages: " +
-                                              snapshot.data.documents[i]
+                                              stream.data.documents[i]
                                                   ['Languages1'] +
                                               " & " +
-                                              snapshot.data.documents[i]
+                                              stream.data.documents[i]
                                                   ['Languages2'],
                                           style: TextStyle(
                                             color: Colors.black,
@@ -334,7 +340,7 @@ class ShowInfoState extends State<ShowInfo> {
                                         ),
                                         Text(
                                           "Nationality: " +
-                                              snapshot.data.documents[i]
+                                              stream.data.documents[i]
                                                   ['Nationality'],
                                           style: TextStyle(
                                             color: Colors.black,
@@ -343,7 +349,7 @@ class ShowInfoState extends State<ShowInfo> {
                                         ),
                                         Text(
                                           "Interest: " +
-                                              snapshot.data.documents[i]
+                                              stream.data.documents[i]
                                                   ['interest'],
                                           style: TextStyle(
                                             color: Colors.black,
@@ -352,7 +358,7 @@ class ShowInfoState extends State<ShowInfo> {
                                         ),
                                         Text(
                                           "Type Of Traveller: " +
-                                              snapshot.data.documents[i]
+                                              stream.data.documents[i]
                                                   ['Type'],
                                           style: TextStyle(
                                             color: Colors.black,
@@ -361,7 +367,7 @@ class ShowInfoState extends State<ShowInfo> {
                                         ),
                                         Text(
                                           "Next Destination: " +
-                                              snapshot.data.documents[i]
+                                              stream.data.documents[i]
                                                   ['Destination'],
                                           style: TextStyle(
                                             color: Colors.black,
@@ -375,7 +381,7 @@ class ShowInfoState extends State<ShowInfo> {
                                             FlatButton(
                                               onPressed: () {
                                                 _confirm();
-                                                String chatId = snapshot
+                                                String chatId = stream
                                                     .data.documents[i]['id'];
                                                 DocumentReference
                                                     documentReference =
@@ -387,11 +393,11 @@ class ShowInfoState extends State<ShowInfo> {
                                                 Map<String, String>
                                                     profilesData =
                                                     <String, String>{
-                                                  "displayName": snapshot.data
+                                                  "displayName": stream.data
                                                       .documents[i]['Name'],
-                                                  "id": snapshot
+                                                  "id": stream
                                                       .data.documents[i]['id'],
-                                                  "photoURL": snapshot.data
+                                                  "photoURL": stream.data
                                                       .documents[i]['imageURL'],
                                                   "aboutMe":
                                                       "I am a fellow passenger!",
