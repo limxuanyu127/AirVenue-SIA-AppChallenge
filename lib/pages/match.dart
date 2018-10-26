@@ -204,32 +204,32 @@ class ShowInfoState extends State<ShowInfo> {
   dataStream() {
     String interest;
     if (databaseDocuments[0]['filter'] == 'yes') {
-        interest = filterDocuments[0]['interest'];
-        stream = Firestore.instance
-        .collection('users')
-        .where('interest', isEqualTo: interest)
-        .where('Match', isEqualTo: 'Yes')
-        .snapshots();
-    } else{
-    stream = Firestore.instance
-        .collection('users')
-        .where('Match', isEqualTo: 'Yes')
-        .snapshots();
+      interest = filterDocuments[0]['interest'];
+      stream = Firestore.instance
+          .collection('users')
+          .where('interest', isEqualTo: interest)
+          .where('Match', isEqualTo: 'Yes')
+          .snapshots();
+    } else {
+      stream = Firestore.instance
+          .collection('users')
+          .where('Match', isEqualTo: 'Yes')
+          .snapshots();
     }
   }
 
-//new new
+//new new new
   @override
   Widget build(BuildContext context) {
     readData();
     readLocal();
     readData2();
     dataStream();
-    
     return Container(
       child: new StreamBuilder(
           stream: stream,
           builder: (context, stream) {
+            if (stream.hasError) return const Text('Loading...');
             if (!stream.hasData) return const Text('Loading...');
             return stream.data != null
                 ? new ListView.builder(
@@ -275,8 +275,7 @@ class ShowInfoState extends State<ShowInfo> {
                                         title: Container(
                                           padding: EdgeInsets.only(bottom: 6.0),
                                           child: Text(
-                                              stream.data.documents[i]
-                                                  ['Name'],
+                                              stream.data.documents[i]['Name'],
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 color: Color(0xFF1D4886),
@@ -285,8 +284,7 @@ class ShowInfoState extends State<ShowInfo> {
                                               overflow: TextOverflow.clip),
                                         ),
                                         subtitle: Text("Gender: " +
-                                            stream.data.documents[i]
-                                                ['Gender'] +
+                                            stream.data.documents[i]['Gender'] +
                                             " \nAge: " +
                                             stream.data.documents[i]['Age']),
                                       )),
@@ -358,8 +356,7 @@ class ShowInfoState extends State<ShowInfo> {
                                         ),
                                         Text(
                                           "Type Of Traveller: " +
-                                              stream.data.documents[i]
-                                                  ['Type'],
+                                              stream.data.documents[i]['Type'],
                                           style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 13.0,
@@ -395,8 +392,8 @@ class ShowInfoState extends State<ShowInfo> {
                                                     <String, String>{
                                                   "displayName": stream.data
                                                       .documents[i]['Name'],
-                                                  "id": stream
-                                                      .data.documents[i]['id'],
+                                                  "id": stream.data.documents[i]
+                                                      ['id'],
                                                   "photoURL": stream.data
                                                       .documents[i]['imageURL'],
                                                   "aboutMe":
@@ -409,6 +406,8 @@ class ShowInfoState extends State<ShowInfo> {
                                                     .whenComplete(() {
                                                   print("chat created");
                                                 }).catchError((e) => print(e));
+                                                print(databaseDocuments[0]
+                                                          ['id']);
                                                 DocumentReference
                                                     documentReference2 =
                                                     Firestore.instance
@@ -422,7 +421,8 @@ class ShowInfoState extends State<ShowInfo> {
                                                   "displayName":
                                                       databaseDocuments[0]
                                                           ['Name'],
-                                                  "id": chatId,
+                                                  "id": databaseDocuments[0]
+                                                          ['id'],
                                                   "photoURL":
                                                       databaseDocuments[0]
                                                           ['imageURL'],
